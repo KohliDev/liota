@@ -31,6 +31,7 @@
 # ----------------------------------------------------------------------------#
 
 import logging
+import thread
 
 import paho.mqtt.client as paho
 from transport_layer_base import TransportLayer
@@ -44,6 +45,7 @@ class Mqtt(TransportLayer):
 
     def on_message(self, client, userdata, msg):
         log.debug("On Message {0} {1} {2}".format(msg.topic, str(msg.qos), str(msg.payload)))
+        self.value = msg.payload
 
     def on_publish(self, client, userdata, mid):
         log.debug("mid: {0}".format(str(mid)))
@@ -52,6 +54,8 @@ class Mqtt(TransportLayer):
         self.url = url
         self.port = port
         self.client = paho.Client()
+        self.subscribe = self.subscribe
+        self.publish = self.publish
         self.client.on_message = self.on_message
         self.client.on_publish = self.on_publish
         self.client.on_subscribe = self.on_subscribe
@@ -59,14 +63,21 @@ class Mqtt(TransportLayer):
         TransportLayer.__init__(self)
 
     def connect_soc(self):
-        self.client.connect_soc(host=self.url, port=self.port, keepalive=60)
+        self.client.connect(self.url, self.port, 60)
         log.info("Connection Successful")
-
 
     def publish(self, topic, message):
         self.client.publish(topic, message)
-        log.info("Message Sent")
+        log.info("Message {0} sent on topic {1}".format(str(message), str(topic)))
 
     def subscribe(self, topic):
+        log.info("Subscribed to topic {0}".format(str(topic)))
         self.client.subscribe(topic, qos=1)
+        thread.start_new_thread(self.loop_thread, ())
+
+    def loop_thread(self):
         self.client.loop_forever()
+        pass
+
+    def send(self, message):
+        pass
