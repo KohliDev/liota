@@ -107,7 +107,7 @@ def getUTCmillis():
 
 class LiotaConfigPath:
     path_liota_config = ''
-    syswide_path = '/etc/liota/conf/'
+    syswide_path = 'C:\liota\conf'
 
     def __init__(self):
         if LiotaConfigPath.path_liota_config == '':
