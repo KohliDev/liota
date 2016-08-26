@@ -63,14 +63,14 @@ class WebSocket(TransportLayer):
       if not verify_cert:
             self.ws = None
             self.ws = create_connection(host, enable_multithread=True,
-              sslopt={"cert_reqs": ssl.CERT_NONE})
+              sslopt={"cert_reqs": ssl.CERT_NONE, "ssl_version": ssl.PROTOCOL_TLSv1})
       else:
          self.ws = None
          for filename in os.listdir(CERTDIR):
             if os.path.isfile(CERTDIR + "/" + filename):
                try:
                   self.ws = create_connection(host, enable_multithread=True,
-                     sslopt={"cert_reqs": ssl.CERT_REQUIRED, "ca_certs": CERTDIR + "/" + filename})
+                     sslopt={"cert_reqs": ssl.CERT_REQUIRED, "ca_certs": CERTDIR + "/" + filename, "ssl_version": ssl.PROTOCOL_TLSv1})
                   break
                except ssl.SSLError:
                   pass

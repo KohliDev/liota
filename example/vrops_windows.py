@@ -59,13 +59,16 @@ def read_cpu_procs():
     return procs_running
 
 def read_cpu_utilization(sample_duration_sec=1):
-    return round(psutil.cpu_percent(sample_duration_sec),2)
+    return round(psutil.cpu_percent(sample_duration_sec), 2)
 
-def read_disk_busy_stats():
+def read_swap_mem_free():
+    return round((100 - psutil.swap_memory().percent), 2)
+
+def read_disk_usage_stats():
     return round(psutil.disk_usage('C:\\').percent, 2)
 
 def read_mem_free():
-    return round(psutil.virtual_memory().percent, 2)
+    return round((100 - psutil.virtual_memory().percent), 2)
 
 def read_network_bits_recieved():
     return int(psutil.net_io_counters(pernic=False).packets_sent)
@@ -114,10 +117,10 @@ if __name__ == '__main__':
         cpu_procs = vrops.create_metric(vrops_gateway, "CPU_Process", unit=None, sampling_interval_sec=6, sampling_function=read_cpu_procs)
         cpu_procs.start_collecting()
 
-        disk_busy_stats = vrops.create_metric(vrops_gateway, "Disk_Busy_Stats", unit=None, aggregation_size=6, sampling_function=read_disk_busy_stats)
-        disk_busy_stats.start_collecting()
+        disk_usage_stats = vrops.create_metric(vrops_gateway, "Disk_Usage_Stats", unit=None, aggregation_size=6, sampling_function=read_disk_usage_stats)
+        disk_usage_stats.start_collecting()
 
-        network_bits_recieved = vrops.create_metric(vrops_gateway, "Network_Bits_Recieved", unit=None, sampling_interval_sec=5, sampling_function=read_network_bits_recieved)
+        network_bits_recieved = vrops.create_metric(vrops_gateway, "Network_Bits_Received", unit=None, sampling_interval_sec=5, sampling_function=read_network_bits_recieved)
         network_bits_recieved.start_collecting()
     else:
         print "vROPS resource not registered successfully"
@@ -138,5 +141,9 @@ if __name__ == '__main__':
 
         mem_free = vrops.create_metric(vrops_device, "Memory_Free", unit=None, sampling_interval_sec=10, sampling_function=read_mem_free)
         mem_free.start_collecting()
+
+        swap_mem_free = vrops.create_metric(vrops_device, "Swap_Memory_Free", unit=None, sampling_interval_sec=8,
+                                            sampling_function=read_swap_mem_free)
+        swap_mem_free.start_collecting()
     else:
         print "vROPS resource not registered successfully"
