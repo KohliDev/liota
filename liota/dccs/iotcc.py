@@ -123,7 +123,7 @@ class IotControlCenter(DataCenterComponent):
 
             if entity_obj.entity_type == "EdgeSystem":
                 entity_obj.entity_type = "HelixGateway"
-            self.comms.send(json.dumps(
+            self.comms.process(json.dumps(
                 self._registration(self.next_id(), entity_obj.entity_id, entity_obj.name, entity_obj.entity_type)))
             on_response(self.recv_msg_queue.get(True,300))
             if not self.reg_entity_id:
@@ -162,7 +162,7 @@ class IotControlCenter(DataCenterComponent):
             except:
                 raise Exception("Exception while unregistering resource")
 
-        self.comms.send(json.dumps(self._unregistration(self.next_id(), entity_obj.reg_entity_id)))
+        self.comms.process(json.dumps(self._unregistration(self.next_id(), entity_obj.reg_entity_id)))
         on_response(self.recv_msg_queue.get(True,20))
         self.remove_reg_entity_details(entity_obj.ref_entity.name, entity_obj.reg_entity_id)
         if entity_obj.ref_entity.entity_type != "HelixGateway":
@@ -189,9 +189,9 @@ class IotControlCenter(DataCenterComponent):
             entity_obj = reg_entity_child.ref_entity
             self.publish_unit(reg_entity_child, entity_obj.name, entity_obj.unit)
         else:
-            self.comms.send(json.dumps(self._relationship(self.next_id(),
-                                                          reg_entity_parent.reg_entity_id,
-                                                          reg_entity_child.reg_entity_id)))
+            self.comms.process(json.dumps(self._relationship(self.next_id(),
+                                                             reg_entity_parent.reg_entity_id,
+                                                             reg_entity_child.reg_entity_id)))
 
     def _registration(self, msg_id, res_id, res_name, res_kind):
         return {
@@ -254,7 +254,7 @@ class IotControlCenter(DataCenterComponent):
 
     def set_organization_group_properties(self, reg_entity_name, reg_entity_id, reg_entity_type, properties):
         log.info("Organization Group Properties defined for resource {0}".format(reg_entity_name))
-        self.comms.send(json.dumps(
+        self.comms.process(json.dumps(
             self._properties(self.next_id(), reg_entity_id, reg_entity_type,
                              getUTCmillis(), properties)))
 
@@ -268,7 +268,7 @@ class IotControlCenter(DataCenterComponent):
             entity = reg_entity_obj.ref_entity
 
         log.info("Properties defined for resource {0}".format(entity.name))
-        self.comms.send(json.dumps(
+        self.comms.process(json.dumps(
             self._properties(self.next_id(), reg_entity_id, entity.entity_type,
                              getUTCmillis(), properties)))
         if entity.entity_type == "HelixGateway":

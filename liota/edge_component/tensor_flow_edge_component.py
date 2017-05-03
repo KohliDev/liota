@@ -29,76 +29,59 @@
 #  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF     #
 #  THE POSSIBILITY OF SUCH DAMAGE.                                            #
 # ----------------------------------------------------------------------------#
-import json
-import logging
-import socket
-import time
 
-from liota.dev_sims.device_simulator import DeviceSimulator
+import logging
+
+import tensorflow as tf
+
+from liota.edge_component.edge_component import EdgeComponent
+from liota.entities.registered_entity import RegisteredEntity
+from liota.entities.edge_systems.edge_system import EdgeSystem
+from liota.entities.devices.device import Device
+from liota.entities.metrics.metric import Metric
+from liota.entities.metrics.registered_metric import RegisteredMetric
 
 log = logging.getLogger(__name__)
 
-class SocketSimulator(DeviceSimulator):
-    """
-    SocketSimulator does inter-process communication (IPC), and
-    sends simulated device beacon message.
-    """
-    def __init__(self, ip_port, name, simulator):
-        super(SocketSimulator, self).__init__(name=name)
-        str_list = ip_port.split(':')
-        self.ip = str_list[0]
-        if str_list[1] == "" or str_list[1] == None:
-            log.error("No port is specified!")
-            return
-        self.port = int(str_list[1])
-        self.simulator = simulator # backpoint to simulator obj
-        self._connect()
 
-    def _connect(self):
-        self.sock = socket.socket()
-        log.info("Establishing Socket Connection")
-        try:
-            self.sock.connect((self.ip, self.port))
-            log.info("Socket Created")
-        except Exception as ex:
-            log.exception(
-                "Unable to establish socket connection. Please check the firewall rules and try again.")
-            self.sock.close()
-            self.sock = None
-            raise ex
-        log.debug("SocketSimulator is initialized")
-        print "SocketSimulator is initialized"
-        self.cnt = 0
-        self.flag_alive = True
-        self.start()
+class TensorFlowEdgeComponent(EdgeComponent):
 
-    def clean_up(self):
-        self.flag_alive = False
-        self.sock.close()
+    def __init__(self, model_path):
+        super(TensorFlowEdgeComponent, self).__init__(model_path)
+        self.model = None
+        self.load_model()
 
-    def send(self, message):
-        self.sock.process(message)
+    def load_model(self):
+        log.info("Loading model..")
+        saver = tf.train.Saver()
+        with tf.Session() as session:
+            self.model = saver.restore(session, self.model_path)
+            log.info("Model loaded..")
 
-    def run(self):
-        log.info('SocketSimulator is running...')
-        print 'SocketSimulator is running...'
-        while self.flag_alive:
-            msg = {
-                "LM35": {
-                    "k1": "v1",
-                    "SN": "0",
-                    "kn": "vn"
-                }
-            }
-            if self.cnt >= 5:
-                time.sleep(1000);
-            else:
-                msg["LM35"]["SN"] = str(self.cnt)
-                log.debug("send msg:{0}".format(msg))
-                self.sock.sendall(json.dumps(msg))
-                time.sleep(5)
-            self.cnt += 1
-            if self.cnt > 20:
-                self.flag = False
-        log.info('closing %s connection socket %s'.format(self.ip, self.sock))
-        self.sock.close()
+    def register(self, entity_obj):
+        if isinstance(entity_obj, Metric):
+            return RegisteredMetric(entity_obj, self, None)
+        else:
+            return RegisteredEntity(entity_obj, self, None)
+
+    def create_relationship(self, reg_entity_parent, reg_entity_child):
+        reg_entity_child.parent = reg_entity_parent
+
+    def process(self):
+        # TODO: Apply model and return result
+        pass
+
+    def _format_data(self, reg_metric):
+        # TODO: get values out of reg_metric and return values
+        pass
+
+    def set_properties(self, reg_entity, properties):
+        super(TensorFlowEdgeComponent, self).set_properties(reg_entity, properties)
+
+    def unregister(self, entity_obj):
+        pass
+
+    def build_model(self):
+        pass
+
+

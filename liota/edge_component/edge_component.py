@@ -42,13 +42,13 @@ log = logging.getLogger(__name__)
 class EdgeComponent:
 
     """
-    Abstract base class for all DCCs.
+    Abstract base class for all EdgeComponents.
     """
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def __init__(self, comms):
-        self.comms = comms
+    def __init__(self, model_path):
+        self.model_path = model_path
 
     # -----------------------------------------------------------------------
     # Implement this method in subclasses and do actual registration.
@@ -73,18 +73,14 @@ class EdgeComponent:
         pass
 
     @abstractmethod
-    def send(self):
+    def process(self):
         pass
 
     def publish(self, reg_metric):
         if not isinstance(reg_metric, RegisteredMetric):
             log.error("RegisteredMetric object is expected.")
             raise TypeError("RegisteredMetric object is expected.")
-        message = self._format_data(reg_metric)
-        if hasattr(reg_metric, 'msg_attr'):
-            self.send(message, reg_metric.msg_attr)
-        else:
-            self.send(message, None)
+        self.process(self._format_data(reg_metric))
 
     @abstractmethod
     def set_properties(self, reg_entity, properties):

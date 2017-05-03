@@ -95,7 +95,7 @@ class WebSocket():
         log.debug("Sending data to DCC")
         log.debug("TX Sending message {0}".format(msg))
         try:
-            self.ws.send(msg)
+            self.ws.process(msg)
         except:
             # TODO: Retry logic required to be re-designed
             attempts = 1
@@ -105,7 +105,7 @@ class WebSocket():
                     self.connect_soc()
                     log.info("Created New Websocket")
                     log.debug("TX Sending message {0}".format(msg))
-                    self.ws.send(msg)
+                    self.ws.process(msg)
                     break
                 except:
                     # Three times retry websocket connection for publishing data
