@@ -32,28 +32,33 @@
 
 from linux_metrics import cpu_stat, disk_stat, net_stat, mem_stat
 
+from liota.edge_component.file_reader_package import FileReader
 from liota.dccs.iotcc import IotControlCenter
 from liota.entities.metrics.metric import Metric
+import csv
+from liota.edge_component.pfa_component import PFAComponent
 from liota.entities.devices.simulated_device import SimulatedDevice
 from liota.entities.edge_systems.dell5k_edge_system import Dell5KEdgeSystem
 from liota.dcc_comms.websocket_dcc_comms import WebSocketDccComms
 from liota.dccs.dcc import RegistrationFailure
 from liota.lib.utilities.utility import get_default_network_interface, get_disk_name
 
-
 # getting values from conf file
 config = {}
 execfile('sampleProp.conf', config)
+line = 0
+rows = None
+
 
 # Getting edge_system's network interface and disk name
 
 # There are situations where route may not actually return a default route in the
 # main routing table, as the default route might be kept in another table.
 # Such cases should be handled manually.
-network_interface = get_default_network_interface()
+# network_interface = get_default_network_interface()
 # If edge_system has multiple disks, only first disk will be returned.
 # Such cases should be handled manually.
-disk_name = get_disk_name()
+# disk_name = get_disk_name()
 
 
 
@@ -69,131 +74,38 @@ disk_name = get_disk_name()
 # semantics are that on each call the function returns the next available value
 # from the device or system associated to the metric.
 
-def read_cpu_procs():
-    return cpu_stat.procs_running()
+def read_file(path):
+    with open(path, 'r') as my_file:
+        reader = csv.reader(my_file)
+        global rows
+        rows = list(reader)
 
 
-def read_cpu_utilization(sample_duration_sec=1):
-    cpu_pcts = cpu_stat.cpu_percents(sample_duration_sec)
-    return round((100 - cpu_pcts['idle']), 2)
-    
-
-def read_disk_usage_stats():
-    return round(disk_stat.disk_reads_writes(disk_name)[0], 2)
+def action_actuator(value):
+    print value
 
 
-def read_network_bytes_received():
-    return round(net_stat.rx_tx_bytes(network_interface)[0], 2)
+def read_csv_file():
+    global line
+    line += 1
+    if not line > len(rows):
+        return int(rows[line][0])
 
 
-def read_mem_free():
-    total_mem = round(mem_stat.mem_stats()[1],4)
-    free_mem = round(mem_stat.mem_stats()[3],4)
-    mem_free_percent = ((total_mem-free_mem)/total_mem)*100
-    return round(mem_free_percent, 2)
-
-    
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # In this example, we demonstrate how System health and some simulated data
 # can be directed to data center component IoTCC using Liota.
 # The program illustrates the ease of use Liota brings to IoT application developers.
 
 if __name__ == '__main__':
-
-
-    # create a data center object, IoTCC in this case, using websocket as a transport layer
-    # this object encapsulates the formats and protocols necessary for the agent to interact with the dcc
-    # UID/PASS login for now.
-    iotcc = IotControlCenter(config['IotCCUID'], config['IotCCPassword'],
-                             WebSocketDccComms(url=config['WebSocketUrl']))
-
-    try:
-        # create a System object encapsulating the particulars of a IoT System
-        # argument is the name of this IoT System
-        edge_system = Dell5KEdgeSystem(config['EdgeSystemName'])
-
-        # resister the IoT System with the IoTCC instance
-        # this call creates a representation (a Resource) in IoTCC for this IoT System with the name given
-        reg_edge_system = iotcc.register(edge_system)
-
-        # these call set properties on the Resource representing the IoT System
-        # properties are a key:value store
-        reg_edge_system.set_properties(config['SystemPropList'])
-
-        # ---------- Create metrics 'on' the Resource in IoTCC representing the IoT System
-        # arguments:
-        # local object referring to the Resource in IoTCC on which the metric should be associated
-        # metric name
-        # unit = An SI Unit (work needed here)
-        # sampling_interval = the interval in seconds between called to the user function to obtain the next value for the metric
-        # aggregation_size = the number of values collected in a cycle before publishing to DCC
-        # value = user defined function to obtain the next value from the device associated with this metric
-        cpu_utilization_metric = Metric(
-            name="CPU Utilization",
-            unit=None,
-            interval=10,
-            aggregation_size=2,
-            sampling_function=read_cpu_utilization
-        )
-        reg_cpu_utilization_metric = iotcc.register(cpu_utilization_metric)
-        iotcc.create_relationship(reg_edge_system, reg_cpu_utilization_metric)
-        # call to start collecting values from the device or system and sending to the data center component
-        reg_cpu_utilization_metric.start_collecting()
-
-        cpu_procs_metric = Metric(
-            name="CPU Process",
-            unit=None,
-            interval=6,
-            aggregation_size=8,
-            sampling_function=read_cpu_procs
-        )
-        reg_cpu_procs_metric = iotcc.register(cpu_procs_metric)
-        iotcc.create_relationship(reg_edge_system, reg_cpu_procs_metric)
-        reg_cpu_procs_metric.start_collecting()
-
-        disk_usage_metric = Metric(
-            name="Disk Usage Stats",
-            unit=None,
-            interval=6,
-            aggregation_size=6,
-            sampling_function=read_disk_usage_stats
-        )
-        reg_disk_usage_metric = iotcc.register(disk_usage_metric)
-        iotcc.create_relationship(reg_edge_system, reg_disk_usage_metric)
-        reg_disk_usage_metric.start_collecting()
-
-        network_bits_received_metric = Metric(
-            name="Network Bytes Received",
-            unit=None,
-            interval=5,
-            sampling_function=read_network_bytes_received
-        )
-        reg_network_bits_received_metric = iotcc.register(network_bits_received_metric)
-        iotcc.create_relationship(reg_edge_system, reg_network_bits_received_metric)
-        reg_network_bits_received_metric.start_collecting()
-
-        # Here we are showing how to create a device object, registering it in IoTCC, and setting properties on it
-        # Since there are no attached devices are as simulating one by considering RAM as separate from the IoT System
-        # The agent makes possible many different data models
-        # arguments:
-        #        device name
-        #        Read or Write
-        #        another Resource in IoTCC of which the should be the child of a parent-child relationship among Resources
-        ram_device = SimulatedDevice(config['DeviceName'], "Device-RAM")
-        reg_ram_device = iotcc.register(ram_device)
-        iotcc.create_relationship(reg_edge_system, reg_ram_device)
-
-        # note that the location of this 'device' is different from the location of the IoTCC. It's not really different
-        # but just an example of how one might create a device different from the IoTCC
-        mem_free_metric = Metric(
-            name="Memory Free",
-            unit=None,
-            interval=10,
-            sampling_function=read_mem_free
-        )
-        reg_mem_free_metric = iotcc.register(mem_free_metric)
-        iotcc.create_relationship(reg_ram_device, reg_mem_free_metric)
-        reg_mem_free_metric.start_collecting()
-
-    except RegistrationFailure:
-        print "Registration to IOTCC failed"
+    read_file("/Users/vkohli/sample.csv")
+    sample = PFAComponent("/Users/vkohli/sample.pfa", action_actuator)
+    sample_metric = Metric(
+        name="File Metric",
+        unit=None,
+        interval=10,
+        aggregation_size=1,
+        sampling_function=read_csv_file
+    )
+    reg_sample_metric = sample.register(sample_metric)
+    reg_sample_metric.start_collecting()

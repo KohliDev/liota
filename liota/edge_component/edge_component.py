@@ -47,8 +47,9 @@ class EdgeComponent:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def __init__(self, model_path):
+    def __init__(self, model_path, actuator_udm):
         self.model_path = model_path
+        self.actuator_udm = actuator_udm
 
     # -----------------------------------------------------------------------
     # Implement this method in subclasses and do actual registration.
@@ -73,7 +74,7 @@ class EdgeComponent:
         pass
 
     @abstractmethod
-    def process(self):
+    def process(self, message):
         pass
 
     def publish(self, reg_metric):

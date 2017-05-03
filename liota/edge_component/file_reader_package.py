@@ -33,28 +33,23 @@
 import logging
 
 from liota.edge_component.edge_component import EdgeComponent
-from liota.entities.registered_entity import RegisteredEntity
-from liota.entities.edge_systems.edge_system import EdgeSystem
-from liota.entities.devices.device import Device
+import csv
 from liota.entities.metrics.metric import Metric
 from liota.entities.metrics.registered_metric import RegisteredMetric
+from liota.entities.registered_entity import RegisteredEntity
 
 log = logging.getLogger(__name__)
 
 
-class TensorFlowEdgeComponent(EdgeComponent):
+class FileReader(EdgeComponent):
 
-    def __init__(self, model_path):
-        super(TensorFlowEdgeComponent, self).__init__(model_path)
+    def __init__(self, model_path, actuator_udm):
+        super(FileReader, self).__init__(model_path, actuator_udm)
         self.model = None
         self.load_model()
 
     def load_model(self):
         log.info("Loading model..")
-        saver = tf.train.Saver()
-        with tf.Session() as session:
-            self.model = saver.restore(session, self.model_path)
-            log.info("Model loaded..")
 
     def register(self, entity_obj):
         if isinstance(entity_obj, Metric):
@@ -63,23 +58,23 @@ class TensorFlowEdgeComponent(EdgeComponent):
             return RegisteredEntity(entity_obj, self, None)
 
     def create_relationship(self, reg_entity_parent, reg_entity_child):
-        reg_entity_child.parent = reg_entity_parent
-
-    def process(self):
-        # TODO: Apply model and return result
         pass
+
+    def process(self,message):
+        with open(self.model_path) as csvfile:
+            self.readCSV = csv.reader(csvfile, delimiter=',')
+            for row in self.readCSV:
+                self.actuator_udm(row)
 
     def _format_data(self, reg_metric):
         # TODO: get values out of reg_metric and return values
         pass
 
     def set_properties(self, reg_entity, properties):
-        super(TensorFlowEdgeComponent, self).set_properties(reg_entity, properties)
+        pass
 
     def unregister(self, entity_obj):
         pass
 
     def build_model(self):
         pass
-
-

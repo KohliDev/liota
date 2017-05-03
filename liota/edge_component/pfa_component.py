@@ -33,28 +33,27 @@
 import logging
 
 from liota.edge_component.edge_component import EdgeComponent
-from liota.entities.registered_entity import RegisteredEntity
-from liota.entities.edge_systems.edge_system import EdgeSystem
-from liota.entities.devices.device import Device
+import csv
 from liota.entities.metrics.metric import Metric
 from liota.entities.metrics.registered_metric import RegisteredMetric
+from liota.entities.registered_entity import RegisteredEntity
+import titus.prettypfa
+import json
+from titus.genpy import PFAEngine
 
 log = logging.getLogger(__name__)
 
 
-class TensorFlowEdgeComponent(EdgeComponent):
+class PFAComponent(EdgeComponent):
 
-    def __init__(self, model_path):
-        super(TensorFlowEdgeComponent, self).__init__(model_path)
+    def __init__(self, model_path, actuator_udm):
+        super(PFAComponent, self).__init__(model_path, actuator_udm)
         self.model = None
         self.load_model()
 
     def load_model(self):
         log.info("Loading model..")
-        saver = tf.train.Saver()
-        with tf.Session() as session:
-            self.model = saver.restore(session, self.model_path)
-            log.info("Model loaded..")
+        self.model, = PFAEngine.fromJson(json.load(open(self.model_path)))
 
     def register(self, entity_obj):
         if isinstance(entity_obj, Metric):
@@ -63,23 +62,25 @@ class TensorFlowEdgeComponent(EdgeComponent):
             return RegisteredEntity(entity_obj, self, None)
 
     def create_relationship(self, reg_entity_parent, reg_entity_child):
-        reg_entity_child.parent = reg_entity_parent
-
-    def process(self):
-        # TODO: Apply model and return result
         pass
+
+    def process(self,message):
+        self.actuator_udm(self.model.action(message))
 
     def _format_data(self, reg_metric):
-        # TODO: get values out of reg_metric and return values
-        pass
+        met_cnt = reg_metric.values.qsize()
+        if met_cnt == 0:
+            return
+        for _ in range(met_cnt):
+            m = reg_metric.values.get(block=True)
+            if m is not None:
+                return m[1]
 
     def set_properties(self, reg_entity, properties):
-        super(TensorFlowEdgeComponent, self).set_properties(reg_entity, properties)
+        pass
 
     def unregister(self, entity_obj):
         pass
 
     def build_model(self):
         pass
-
-
