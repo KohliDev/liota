@@ -30,49 +30,15 @@
 #  THE POSSIBILITY OF SUCH DAMAGE.                                            #
 # ----------------------------------------------------------------------------#
 
-from linux_metrics import cpu_stat, disk_stat, net_stat, mem_stat
-
-from liota.edge_component.file_reader_package import FileReader
-from liota.dccs.iotcc import IotControlCenter
-from liota.entities.metrics.metric import Metric
 import csv
-from liota.edge_component.pfa_component import PFAComponent
-from liota.entities.devices.simulated_device import SimulatedDevice
-from liota.entities.edge_systems.dell5k_edge_system import Dell5KEdgeSystem
-from liota.dcc_comms.websocket_dcc_comms import WebSocketDccComms
-from liota.dccs.dcc import RegistrationFailure
-from liota.lib.utilities.utility import get_default_network_interface, get_disk_name
 
-# getting values from conf file
-config = {}
-execfile('sampleProp.conf', config)
+from liota.entities.metrics.metric import Metric
+from liota.edge_component.pfa_component import PFAComponent
+
+
 line = 0
 rows = None
 
-
-# Getting edge_system's network interface and disk name
-
-# There are situations where route may not actually return a default route in the
-# main routing table, as the default route might be kept in another table.
-# Such cases should be handled manually.
-# network_interface = get_default_network_interface()
-# If edge_system has multiple disks, only first disk will be returned.
-# Such cases should be handled manually.
-# disk_name = get_disk_name()
-
-
-
-# some standard metrics for Linux systems
-# agent classes for different IoT system
-# agent classes for different data center components
-# agent classes for different kinds of of devices, connected to the IoT System
-# we are showing here how to create a representation for a Device in IoTCC but
-# using the notion of RAM (because we have no connected devices yet)
-# agent classes for different kinds of layer 4/5 connections from agent to DCC
-# -------User defined functions for getting the next value for a metric --------
-# usage of these shown below in main
-# semantics are that on each call the function returns the next available value
-# from the device or system associated to the metric.
 
 def read_file(path):
     with open(path, 'r') as my_file:
