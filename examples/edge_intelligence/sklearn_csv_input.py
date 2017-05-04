@@ -64,7 +64,7 @@ def read_csv_file():
 
 if __name__ == '__main__':
     read_file("/home/vl/Desktop/sample.csv")
-    sample = SKLearnEdgeComponent("/home/vl/Desktop/finalized_model.sav", action_actuator)
+    sample = SKLearnEdgeComponent('/home/pi/Desktop/Borathon/liota/edge_intelligence_models/windmill/finalized_model.sav', action_actuator)
     sample_metric = Metric(
         name="File Metric",
         unit=None,

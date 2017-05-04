@@ -65,7 +65,7 @@ def read_csv_file():
 
 if __name__ == '__main__':
     read_file("/Users/vkohli/sample.csv")
-    sample = PFAComponent("/Users/vkohli/sample.pfa", action_actuator)
+    sample = PFAComponent('/home/pi/Desktop/Borathon/liota/edge_intelligence_models/windmill/finalized_model.pfa', action_actuator)
     sample_metric = Metric(
         name="File Metric",
         unit=None,
