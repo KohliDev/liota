@@ -47,7 +47,7 @@ from liota.edge_component.pfa_component import PFAComponent
 
 # getting values from conf file
 config = {}
-execfile('./sampleProp.conf', config)
+execfile('../sampleProp.conf', config)
 
 # create a pint unit registry
 ureg = pint.UnitRegistry()
