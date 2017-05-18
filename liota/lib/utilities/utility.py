@@ -48,7 +48,6 @@ import stat
 import json
 import subprocess
 
-
 log = logging.getLogger(__name__)
 
 
@@ -66,16 +65,26 @@ class systemUUID:
     def _getMacAddrIfaceHash(self):
         mac = uuid.getnode()
         if (mac >> 40) % 2:
-            log.warn(
-                'could not find a mac address, an unlikely potential exists for uuid collisions with liota instances on other IoT gateways')
-            # generate a 48-bit random integer from this seed
-            # always returns the same random integer
-            # however in get_uuid below a unique uuid for each resource name will be created
-            # this allows us not to have to store any uuid on the persistent storage yet
-            # create a unique system uuid
-            random.seed(1234567)
-            mac = random.randint(0, 281474976710655)
+            uuid_path = read_liota_config('UUID_PATH', 'uuid_path')
+            if uuid_path.exists:
+                try:
+                    config = ConfigParser.RawConfigParser()
+                    config.read(uuid_path)
+                    mac = config.get('GW_MAC_ADDRESS', 'MAC_ADDRESS')
+                except ConfigParser.ParsingError, err:
+                    log.error('Could not open config file ' + str(err))
+            else:
+                log.warn(
+                    'Could not find a mac address, an unlikely potential exists for uuid collisions with liota instances on other IoT gateways')
+                # generate a 48-bit random integer from this seed
+                #  always returns the same random integer
+                #  however in get_uuid below a unique uuid for each resource name will be created
+                #  this allows us not to have to store any uuid on the persistent storage yet
+                #  create a unique system uuid
+                random.seed(1234567)
+                mac = random.randint(0, 281474976710655)
         m = hashlib.md5()
+        store_edge_system_mac(mac)
         m.update(str(mac))
         self.macHash = m.hexdigest()
         return self.macHash
@@ -144,7 +153,6 @@ def get_disk_name():
 def getUTCmillis():
     return long(1000 * ((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()))
 
-  
 def mkdir(path):
     if not os.path.exists(path):
         try:
@@ -178,6 +186,29 @@ def store_edge_system_uuid(entity_name, entity_id, reg_entity_id):
             uuid_config.write(configfile)
     except ConfigParser.ParsingError, err:
         log.error('Could not open config file ' + str(err))
+
+
+def store_edge_system_mac(mac_id):
+    """
+    Utility function to store EdgeSystem's Name, local-uuid and registered-uuid in the
+    specified file.
+    :param entity_name: EdgeSystem's Name
+    :param entity_id: Local uuid of the EdgeSystem
+    :param reg_entity_id: Registered uuid of the EdgeSystem
+    :return: None
+    """
+    try:
+        uuid_path = read_liota_config('UUID_PATH', 'uuid_path')
+        uuid_config = ConfigParser.RawConfigParser()
+        uuid_config.optionxform = str
+        uuid_config.add_section('GW_MAC_ADDRESS')
+        if mac_id:
+            uuid_config.set('GW_MAC_ADDRESS', 'MAC_ADDRESS', mac_id)
+        with open(uuid_path, 'w') as configfile:
+            uuid_config.write(configfile)
+    except ConfigParser.ParsingError, err:
+        log.error('Could not open config file ' + str(err))
+
 
 def sha1sum(path_file):
     """
@@ -264,7 +295,6 @@ class LiotaConfigPath:
             # missing config file
             log.warn('liota.conf file missing')
 
-            
 def read_liota_config(section, name):
     """
     Returns the value of name within the specified section.
@@ -277,11 +307,11 @@ def read_liota_config(section, name):
                 try:
                     value = config.get(section, name)
                 except ConfigParser.ParsingError as err:
-                    log.error('Could not parse log config file' + str(err))
+                    log.error('Could not parse config file' + str(err))
             else:
                 raise IOError('Cannot open configuration file ' + fullPath)
         except IOError as err:
-            log.error('Could not open log config file')
+            log.error('Could not open config file')
     else:
         # missing config file
         log.warn('liota.conf file missing')
