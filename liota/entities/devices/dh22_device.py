@@ -60,10 +60,10 @@ class DH22Device(Device):
         else:
             log.info("Please specify the correct Pin Number and Sensor Args")
 
-        def get_temperature():
-            return Adafruit_DHT.read_retry(self.sensor, self.pin)[1]
+    def get_temperature(self):
+        return Adafruit_DHT.read_retry(self.sensor, self.pin)[1]
 
-        def get_humidity():
-            return Adafruit_DHT.read_retry(self.sensor, self.pin)[0]
+    def get_humidity(self):
+        return Adafruit_DHT.read_retry(self.sensor, self.pin)[0]
 
 
