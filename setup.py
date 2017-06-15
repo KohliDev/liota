@@ -30,86 +30,12 @@
 #  THE POSSIBILITY OF SUCH DAMAGE.                                            #
 # ----------------------------------------------------------------------------#
 
-#
-# Includes
-#
-
 import os
 import pip
 import sys
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
-#
-# Useful Variables
-#
-
-PACKAGE_NAME = "liota"
-PACKAGE_VERSION = "0.2.1"
-
-#
-# Functions
-#
-
-
-def get_tree_walk(path):
-    filename_list = []
-    for dirpath, dirname, filenames in os.walk(path):
-        # We need to remove the leading directory
-        # as the os.walk adds it in, and it's not super
-        # useful to us in this case as we know it
-        dirpath_split = (dirpath.split(os.path.sep)[1:])
-
-        if( len( dirpath_split) > 0 ):
-            dirpath_trunk = os.path.join(*(dirpath_split))
-        else:
-            dirpath_trunk = ""
-
-        # If the filenames isn't empty, add the filenames
-        if( len( filenames ) > 0):
-            filename_list.append((dirpath, filenames))
-    return filename_list
-
-
-def get_data_files():
-    # Setup an empty return
-    data_files = []
-
-    #
-    # The following 4 lines would be useful if we were doing cross
-    # platform instalation.  It's currently unclear if this is
-    # supported so this is being left here in the off chance it
-    # becomes relevant
-    #
-    # if sys.platform == "win32":
-    #     datadir = os.path.join("doc", PACKAGE_NAME)
-    # else:
-    #    datadir = os.path.join("share", "doc", PACKAGE_NAME)
-
-    datadir = os.path.join(
-        os.path.abspath(os.sep),
-        "usr",
-        "lib",
-        PACKAGE_NAME
-        )
-
-    data_files = [
-        (datadir, ['BSD_LICENSE.txt', 'BSD_NOTICE.txt', 'post-install-setup.sh']),
-        ]
-    for docs in ['examples', 'packages', 'config', 'packages', ]:
-        file_list = get_tree_walk(docs)
-        if len(file_list):
-            for dirpath,files in file_list:
-                thesefiles = []
-                for sfile in files:
-                    thesefiles.append(os.path.join(dirpath, sfile))
-                data_files.append((os.path.join(datadir, dirpath), thesefiles))
-
-    return data_files
-
-#
-# Python setup.py definitions
-#
 
 requirements = [str(requirement.req) for requirement in parse_requirements(
     'requirements.txt', session=pip.download.PipSession())]
