@@ -58,7 +58,7 @@ class PackageClass(LiotaPackage):
         # Initialize DCC object with transport
         self.graphite = Graphite(
             SocketDccComms(ip=config['GraphiteIP'],
-                   port=config['GraphitePort'])
+                           port=config['GraphitePort'])
         )
 
         # Register gateway system

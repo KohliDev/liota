@@ -33,6 +33,7 @@
 from liota.core.package_manager import LiotaPackage
 from liota.lib.utilities.utility import read_user_config
 
+
 class PackageClass(LiotaPackage):
     """
     This package contains specifications of Dell5K and properties to import

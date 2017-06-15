@@ -33,8 +33,8 @@
 from liota.entities.edge_systems.edge_system import EdgeSystem
 from liota.lib.utilities.utility import systemUUID
 
-class RpiEdgeSystem(EdgeSystem):
 
+class RpiEdgeSystem(EdgeSystem):
     def __init__(self, name):
         super(RpiEdgeSystem, self).__init__(
             name=name,

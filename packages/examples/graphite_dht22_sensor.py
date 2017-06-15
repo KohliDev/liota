@@ -35,18 +35,18 @@ import pint
 
 ureg = pint.UnitRegistry()
 
-dependencies = ["graphite_rpi", "examples/dh22_device"]
+dependencies = ["graphite_rpi", "examples/dht22_device"]
 
 
 def get_thermistor_temperature(dht22_device):
-    return dht22_device.get_temperature()
+    return round(dht22_device.get_temperature(), 2)
+
 
 def get_humidity(dht22_device):
-    return dht22_device.get_humidity()
+    return round(dht22_device.get_humidity(), 2)
 
 
 class PackageClass(LiotaPackage):
-
     def run(self, registry):
         from liota.entities.metrics.metric import Metric
 
@@ -62,7 +62,7 @@ class PackageClass(LiotaPackage):
             name=metric_temper,
             unit=ureg.degC,
             interval=5,
-            sampling_function=lambda:get_thermistor_temperature(dht22_device)
+            sampling_function=lambda: get_thermistor_temperature(dht22_device)
         )
         reg_thermistor_temper = graphite.register(thermistor_temper)
         graphite.create_relationship(graphite_dht22_device, reg_thermistor_temper)
@@ -74,7 +74,7 @@ class PackageClass(LiotaPackage):
             name=metric_humidity,
             unit=None,
             interval=8,
-            sampling_function=lambda:get_humidity(dht22_device)
+            sampling_function=lambda: get_humidity(dht22_device)
         )
         reg_humidity_device = graphite.register(humidity_device)
         graphite.create_relationship(graphite_dht22_device, reg_humidity_device)

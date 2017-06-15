@@ -34,6 +34,7 @@ import os
 import sys
 import hashlib
 
+
 def sha1sum(path_file):
     """
     This method calculates SHA-1 checksum of file.
@@ -50,8 +51,9 @@ def sha1sum(path_file):
             sha1.update(data)
     return sha1
 
+
 # main
-param_1= sys.argv[1] 
+param_1 = sys.argv[1]
 print 'Params=', param_1
 filen = param_1
 print "File: ", filen

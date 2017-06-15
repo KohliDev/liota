@@ -38,8 +38,8 @@ from liota.lib.utilities.utility import systemUUID
 
 log = logging.getLogger(__name__)
 
-class DHT22Device(Device):
 
+class DHT22Device(Device):
     def __init__(self, name, pin_no, sensor_param, entity_type="DHT22"):
 
         super(DHT22Device, self).__init__(
@@ -65,5 +65,3 @@ class DHT22Device(Device):
 
     def get_humidity(self):
         return Adafruit_DHT.read_retry(self.sensor, self.pin)[0]
-
-
