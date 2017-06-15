@@ -38,7 +38,6 @@ from liota.lib.utilities.utility import systemUUID
 
 log = logging.getLogger(__name__)
 
-class DHT22Device(Device):
 
 class DHT22Device(Device):
     def __init__(self, name, pin_no, sensor_param, entity_type="DHT22"):
