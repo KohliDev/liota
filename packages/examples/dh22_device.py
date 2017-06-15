@@ -33,7 +33,7 @@
 from liota.core.package_manager import LiotaPackage
 from liota.lib.utilities.utility import read_user_config
 
-dependencies = ["edge_systems/dell5k/edge_system"]
+dependencies = ["edge_systems/rpi/edge_system"]
 
 
 class PackageClass(LiotaPackage):

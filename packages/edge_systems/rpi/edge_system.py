@@ -31,56 +31,25 @@
 # ----------------------------------------------------------------------------#
 
 from liota.core.package_manager import LiotaPackage
-import pint
-
-ureg = pint.UnitRegistry()
-
-dependencies = ["graphite_rpi", "examples/dh22_device"]
-
-
-def get_thermistor_temperature(dh22_device):
-    return dh22_device.get_temperature()
-
-def get_humidity(dh22_device):
-    return dh22_device.get_humidity()
-
+from liota.lib.utilities.utility import read_user_config
 
 class PackageClass(LiotaPackage):
+    """
+    This package contains specifications of Dell5K and properties to import
+    from configuration file.
+    It registers "edge system" in package manager's resource registry.
+    """
 
     def run(self, registry):
-        from liota.entities.metrics.metric import Metric
+        from liota.entities.edge_systems.rpi_edge_system import RpiEdgeSystem
 
-        # Acquire resources from registry
-        graphite = registry.get("graphite")
-        dh22_device = registry.get("dh22_device")
-        graphite_dh22_device = graphite.register(dh22_device)
+        # getting values from conf file
+        config_path = registry.get("package_conf")
+        config = read_user_config(config_path + '/sampleProp.conf')
 
-        # Create metrics
-        self.metrics = []
-        metric_temper = "model.dh22_device.temperature"
-        thermistor_temper = Metric(
-            name=metric_temper,
-            unit=ureg.degC,
-            interval=5,
-            sampling_function=lambda:get_thermistor_temperature(dh22_device)
-        )
-        reg_thermistor_temper = graphite.register(thermistor_temper)
-        graphite.create_relationship(graphite_dh22_device, reg_thermistor_temper)
-        reg_thermistor_temper.start_collecting()
-        self.metrics.append(reg_thermistor_temper)
-
-        metric_humidity = "model.dh22_device.humidity"
-        humidity_device = Metric(
-            name=metric_humidity,
-            unit=None,
-            interval=8,
-            sampling_function=lambda:get_humidity(dh22_device)
-        )
-        reg_humidity_device = graphite.register(humidity_device)
-        graphite.create_relationship(graphite_dh22_device, reg_humidity_device)
-        reg_humidity_device.start_collecting()
-        self.metrics.append(reg_humidity_device)
+        # Initialize edgesystem
+        edge_system = RpiEdgeSystem(config['EdgeSystemName'])
+        registry.register("edge_system", edge_system)
 
     def clean_up(self):
-        for metric in self.metrics:
-            metric.stop_collecting()
+        pass
