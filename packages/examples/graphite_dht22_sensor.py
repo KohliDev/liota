@@ -38,11 +38,11 @@ ureg = pint.UnitRegistry()
 dependencies = ["graphite_rpi", "examples/dh22_device"]
 
 
-def get_thermistor_temperature(dh22_device):
-    return dh22_device.get_temperature()
+def get_thermistor_temperature(dht22_device):
+    return dht22_device.get_temperature()
 
-def get_humidity(dh22_device):
-    return dh22_device.get_humidity()
+def get_humidity(dht22_device):
+    return dht22_device.get_humidity()
 
 
 class PackageClass(LiotaPackage):
@@ -52,32 +52,32 @@ class PackageClass(LiotaPackage):
 
         # Acquire resources from registry
         graphite = registry.get("graphite")
-        dh22_device = registry.get("dh22_device")
-        graphite_dh22_device = graphite.register(dh22_device)
+        dht22_device = registry.get("dht22_device")
+        graphite_dht22_device = graphite.register(dht22_device)
 
         # Create metrics
         self.metrics = []
-        metric_temper = "model.dh22_device.temperature"
+        metric_temper = "model.dht22_device.temperature"
         thermistor_temper = Metric(
             name=metric_temper,
             unit=ureg.degC,
             interval=5,
-            sampling_function=lambda:get_thermistor_temperature(dh22_device)
+            sampling_function=lambda:get_thermistor_temperature(dht22_device)
         )
         reg_thermistor_temper = graphite.register(thermistor_temper)
-        graphite.create_relationship(graphite_dh22_device, reg_thermistor_temper)
+        graphite.create_relationship(graphite_dht22_device, reg_thermistor_temper)
         reg_thermistor_temper.start_collecting()
         self.metrics.append(reg_thermistor_temper)
 
-        metric_humidity = "model.dh22_device.humidity"
+        metric_humidity = "model.dht22_device.humidity"
         humidity_device = Metric(
             name=metric_humidity,
             unit=None,
             interval=8,
-            sampling_function=lambda:get_humidity(dh22_device)
+            sampling_function=lambda:get_humidity(dht22_device)
         )
         reg_humidity_device = graphite.register(humidity_device)
-        graphite.create_relationship(graphite_dh22_device, reg_humidity_device)
+        graphite.create_relationship(graphite_dht22_device, reg_humidity_device)
         reg_humidity_device.start_collecting()
         self.metrics.append(reg_humidity_device)
 

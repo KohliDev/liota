@@ -38,19 +38,19 @@ dependencies = ["edge_systems/rpi/edge_system"]
 
 class PackageClass(LiotaPackage):
     def run(self, registry):
-        from liota.entities.devices.dh22_device import DH22Device
+        from liota.entities.devices.dht22_device import DHT22Device
 
         # Get values from configuration file
         config_path = registry.get("package_conf")
         config = read_user_config(config_path + '/sampleProp.conf')
 
         # initialize and run the physical model (simulated device)
-        dh22_device = DH22Device(
+        dht22_device = DHT22Device(
             name=config['DeviceName'],
             sensor_param="2302",
             pin_no="4"
         )
-        registry.register("dh22_device", dh22_device)
+        registry.register("dht22_device", dht22_device)
 
     def clean_up(self):
         pass
