@@ -36,7 +36,7 @@ from liota.lib.utilities.utility import read_user_config
 
 class PackageClass(LiotaPackage):
     """
-    This package contains specifications of Dell5K and properties to import
+    This package should contain specifications of RaspberryPi and properties to import
     from configuration file.
     It registers "edge system" in package manager's resource registry.
     """

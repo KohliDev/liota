@@ -51,6 +51,7 @@ class DHT22Device(Device):
         self.sensor_param = sensor_param
         self.pin_no = pin_no
 
+        # Define the various sub-devices part of Adafruit DHT22
         sensor_args = {'11': Adafruit_DHT.DHT11,
                        '22': Adafruit_DHT.DHT22,
                        '2302': Adafruit_DHT.AM2302}
@@ -58,7 +59,7 @@ class DHT22Device(Device):
             self.sensor = sensor_args[self.sensor_param]
             self.pin = self.pin_no
         else:
-            log.info("Please specify the correct Pin Number and Sensor Args")
+            log.error("Please specify the correct Sensor Argument for DHT22 Device")
 
     def get_temperature(self):
         return Adafruit_DHT.read_retry(self.sensor, self.pin)[1]

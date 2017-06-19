@@ -48,6 +48,7 @@ include packages/examples/iotcc_ram.py
 include packages/examples/graphite_bike_simulated.py
 include packages/examples/iotcc_bike_simulated.py
 include packages/examples/graphite_edge_system_stats.py
+include packages/examples/graphite_rpi_stats.py
 include packages/examples/graphite_edge_system_stats_with_filter.py
 include packages/examples/iotcc_edge_system_stats.py
 include packages/examples/iotcc_edge_system_stats_with_filter.py
@@ -61,6 +62,6 @@ include packages/examples/mqtt/iotcc/iotcc_mqtt_edge_system_stats.py
 include packages/examples/mqtt/iotcc/iotcc_mqtt_ram.py
 include packages/examples/mqtt/iotcc/iotcc_resource_properties_mqtt.py
 include packages/examples/dht22_device.py
-include packages/examples/graphite_dht22_sensor.py
+include packages/examples/graphite_dht22_metrics.py
 include packages/edge_systems/dell5k/edge_system.py
 include packages/edge_systems/rpi/edge_system.py

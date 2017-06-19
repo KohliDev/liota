@@ -55,7 +55,7 @@ class PackageClass(LiotaPackage):
         dht22_device = registry.get("dht22_device")
         graphite_dht22_device = graphite.register(dht22_device)
 
-        # Create metrics
+        # Create temperature metric
         self.metrics = []
         metric_temper = "model.dht22_device.temperature"
         thermistor_temper = Metric(
@@ -66,9 +66,12 @@ class PackageClass(LiotaPackage):
         )
         reg_thermistor_temper = graphite.register(thermistor_temper)
         graphite.create_relationship(graphite_dht22_device, reg_thermistor_temper)
+
+        # Publish data to Graphite DCC
         reg_thermistor_temper.start_collecting()
         self.metrics.append(reg_thermistor_temper)
 
+        # Create humidity metric
         metric_humidity = "model.dht22_device.humidity"
         humidity_device = Metric(
             name=metric_humidity,
@@ -78,6 +81,8 @@ class PackageClass(LiotaPackage):
         )
         reg_humidity_device = graphite.register(humidity_device)
         graphite.create_relationship(graphite_dht22_device, reg_humidity_device)
+
+        # Publish data to Graphite DCC
         reg_humidity_device.start_collecting()
         self.metrics.append(reg_humidity_device)
 

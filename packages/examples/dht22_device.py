@@ -44,7 +44,7 @@ class PackageClass(LiotaPackage):
         config_path = registry.get("package_conf")
         config = read_user_config(config_path + '/sampleProp.conf')
 
-        # initialize and run the physical model (simulated device)
+        # initialize and interact with the physical DHT22 Device
         dht22_device = DHT22Device(
             name=config['DeviceName'],
             sensor_param="2302",
