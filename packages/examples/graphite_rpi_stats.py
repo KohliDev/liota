@@ -67,10 +67,19 @@ class PackageClass(LiotaPackage):
         import copy
         from liota.entities.metrics.metric import Metric
 
+<<<<<<< HEAD
+=======
+        # Acquire resources from registry
+        edge_system = copy.copy(registry.get("graphite_edge_system"))
+        graphite = registry.get("graphite")
+        reg_edge_system = graphite.register(edge_system)
+
+>>>>>>> Adding Images and refactoring the Tutorial
         # Get values from configuration file
         config_path = registry.get("package_conf")
         config = read_user_config(config_path + '/sampleProp.conf')
 
+<<<<<<< HEAD
         # Acquire resources from registry
         reg_edge_system = copy.copy(registry.get("graphite_edge_system"))
         graphite = registry.get("graphite")
@@ -78,6 +87,11 @@ class PackageClass(LiotaPackage):
         # Create metrics
         self.metrics = []
         metric_name = config['EdgeSystemName']+".CPU_Utilization"
+=======
+        # Create metrics
+        self.metrics = []
+        metric_name = "EdgeSystem.CPU_Utilization"
+>>>>>>> Adding Images and refactoring the Tutorial
         metric_cpu_utilization = Metric(name=metric_name,
                          unit=None, interval=5,
                          aggregation_size=1,
@@ -88,7 +102,11 @@ class PackageClass(LiotaPackage):
         reg_metric_cpu_utilization.start_collecting()
         self.metrics.append(reg_metric_cpu_utilization)
 
+<<<<<<< HEAD
         metric_name = config['EdgeSystemName']+".CPU_Process"
+=======
+        metric_name = "EdgeSystem.CPU_Process"
+>>>>>>> Adding Images and refactoring the Tutorial
         metric_cpu_procs = Metric(name=metric_name,
                          unit=None, interval=5,
                          aggregation_size=1,
@@ -99,7 +117,11 @@ class PackageClass(LiotaPackage):
         reg_metric_cpu_procs.start_collecting()
         self.metrics.append(reg_metric_cpu_procs)
 
+<<<<<<< HEAD
         metric_name = config['EdgeSystemName']+".Disk_Busy_Stats"
+=======
+        metric_name = "EdgeSystem.Disk_Busy_Stats"
+>>>>>>> Adding Images and refactoring the Tutorial
         metric_disk_busy_stats = Metric(name=metric_name,
                          unit=None, interval=5,
                          aggregation_size=1,
@@ -110,7 +132,11 @@ class PackageClass(LiotaPackage):
         reg_metric_disk_busy_stats.start_collecting()
         self.metrics.append(reg_metric_disk_busy_stats)
 
+<<<<<<< HEAD
         metric_name = config['EdgeSystemName']+".Network_Bytes_Received"
+=======
+        metric_name = "EdgeSystem.Network_Bytes_Received"
+>>>>>>> Adding Images and refactoring the Tutorial
         metric_network_bytes_received = Metric(name=metric_name,
                          unit=None, interval=5,
                          aggregation_size=1,

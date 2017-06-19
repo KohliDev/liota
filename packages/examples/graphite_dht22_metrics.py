@@ -60,7 +60,6 @@ class PackageClass(LiotaPackage):
         dht22_device = registry.get("dht22_device")
         graphite_dht22_device = graphite.register(dht22_device)
 
-        # Create temperature metric
         self.metrics = []
         metric_temper = config['DeviceName']+".dht22_device.temperature"
         thermistor_temper = Metric(
