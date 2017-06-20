@@ -1,4 +1,4 @@
-![Liota](images/liota-logo.png)
+![Liota](images/liota_logo.png)
 
 Little IoT Agent (liota) is an open source project offering some convenience for IoT solution developers in creating IoT Edge System data orchestration applications. Liota has been generalized to allow, via modules, interaction with any data-center component, over any transport, and for any IoT Edge System. It is easy-to-use and provides enterprise-quality modules for interacting with IoT Solutions.
 
