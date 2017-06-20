@@ -10,7 +10,7 @@ Hardware Required:
 
 Wire the RaspberryPi and sensor as shown in the picture below, if the external devices are disconnected, or high-impedance gets introduced the pull-up resistor attached will ensure that the signal will be a valid logic level.
 
-![RPi](images/rpi_circuit_diagram.png)
+![RPi](../images/rpi_circuit_diagram.png)
 
 Update the Raspbian OS:
 ```bash
@@ -22,7 +22,7 @@ Set the time zone correctly:
 $ date -s "18 Jun 2017 09:14:00"
 ```
 
-To communicate with the sensor and collect temperature & humidity metric we’ll be using Adafruit_Python_DHT library.
+To communicate with the sensor and collect temperature & humidity metric we'll be using Adafruit_Python_DHT library.
 
 Install the required dependencies:
 ```bash
@@ -37,12 +37,12 @@ $ cd Adafruit_Python_DHT
 $ sudo python setup.py install
 ```
 
-You can test if the library  properly installed by running the below command, you`ll get the temperature and humidity as the output at the current point of time:
+You can test if the library  properly installed by running the below command, you'll get the temperature and humidity as the output at the current point of time:
 ```bash
 $ sudo /home/pi/sources/Adafruit_Python_DHT/examples/AdafruitDHT.py 2302 4
 ```
 
-Post this step we`ll install liota
+Post this step we'll install liota
 ```bash
 $ pip install liota
 ```
@@ -76,7 +76,7 @@ Liota has the package manager feature which allows to dynamically load/unload th
 
 For this tutorial we have pre-created the packages required, users of Liota can reference them in future to create their packages as per the IoT use case. Post-Liota installation the packages can be found in the following directory “/etc/liota/packages”:
 
-![iot_data_flow](images/iot_data_flow.png)
+![iot_data_flow](../images/iot_data_flow.png)
 
 1. dh22_device: Device Package
 
@@ -93,13 +93,13 @@ For this tutorial we have pre-created the packages required, users of Liota can 
 6. graphite_rpi: It is the Liota package which defines Graphite DCC and registers RPi
                  (https://graphite.readthedocs.io/en/latest/)
 
-For this tutorial, we`ll require installing the Graphite DCC in a docker container. It can be installed on a separate machine/VM to which RPi has the networking access.
+For this tutorial, we'll require installing the Graphite DCC in a docker container. It can be installed on a separate machine/VM to which RPi has the networking access.
 
 You need to install the Docker engine in the machine/VM preferably Ubuntu 16.04 OS. The instruction in the below link can be followed to install Docker CE:
 
 https://docs.docker.com/engine/installation/
 
-If in case, you don`t have a separate VM or a machine for the Graphite Docker container then it can be deployed locally on the RPi.
+If in case, you don't have a separate VM or a machine for the Graphite Docker container then it can be deployed locally on the RPi.
 
 Docker Engine can be installed on RPi as per the instructions in below link:
 
@@ -120,7 +120,7 @@ $ docker run -d
  hopsoft/graphite-statsd
 ```
 
-Now, let`s start the Liota package manager and load the packages required to publish data from the device to Gateway and then to DCC.
+Now, let's start the Liota package manager and load the packages required to publish data from the device to Gateway and then to DCC.
 
 ```bash
 $ cd /etc/liota/packages
@@ -136,7 +136,6 @@ $ tail –f /var/log/liota/liota.log
 
 $./liotapkg.sh list pkg
 ```
-
 
 Modify sampleProp.conf:
 ```bash
