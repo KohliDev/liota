@@ -74,7 +74,7 @@ $ cd /etc/liota/packages/edge_systems
 Liota has the package manager feature which allows to dynamically load/unload the packages representing the fundamental building blocks of Liota as shown in the figure below.
 
 
-For this tutorial we have pre-created the packages required, users of Liota can reference them in future to create their packages as per the IoT use case. Post-Liota installation the packages can be found in the following directory “/etc/liota/packages”:
+For this tutorial we have pre-created the packages required, users of Liota can reference them in future to create their packages as per the IoT use case. Post-Liota installation the packages can be found in the following directory “/etc/liota/packages”.
 
 ![iot_data_flow](../images/iot_data_flow.png)
 
@@ -82,15 +82,14 @@ For this tutorial we have pre-created the packages required, users of Liota can 
 
 2. Adafruit: It is the library used to collect the value from the DHT22 sensor over here it acts as the device communication protocol.
 
-3. edge_system/rpi/edge_systems: Raspberry Pi Edge System
+3. edge_system/rpi/edge_systems: Raspberry Pi Edge System Package
 
-4. graphite_rpi_stats: To collect the CPU utilization, networking and disk usage stats from RPi.
+4. graphite_rpi_stats: Package collect the CPU utilization, networking and disk usage stats from RPi.
+   graphite_dht22_metrics: It is the package which defines the metrics Temperature and Humidity to be collected. 
 
-4. graphite_dht22_metrics: It is the package which defines the metrics Temperature and Humidity to be collected.
+5. Socket: Package which uses Socket as the DCC_Comms to publish data to DCC
 
-5. Socket: It is the DCC communication protocol used to publish data to DCC
-
-6. graphite_rpi: It is the Liota package which defines Graphite DCC and registers RPi
+6. graphite_rpi: It is the Liota package which defines Graphite DCC and registers RPi Edge System.
                  (https://graphite.readthedocs.io/en/latest/)
 
 For this tutorial, we'll require installing the Graphite DCC in a docker container. It can be installed on a separate machine/VM to which RPi has the networking access.
@@ -142,13 +141,13 @@ Modify sampleProp.conf:
 $ cd /etc/liota/packages/
 $ sudo pico sampleProp.conf
 (use editor of your choice)
-```
 
 Replace “Edge-System-Name” & “Device-Name” with some unique name (maybe your first-last-name)
 
 GraphiteIP is “127.0.0.1” or the machine IP address (in quotes)
 
 GraphitePort is 2003 (without quotes)
+```
 
 Load the RPi Edge_system package:
 ```bash
@@ -179,11 +178,8 @@ $ ./liotapkg.sh list pkg
 
 After loading all the packages look at Graphite and find your metric, refresh the browser the stats might appear after a minute.
 
-Package_Dependencies are defined at the top of the package.
+Package_Dependencies are defined at the top of the package.Finally, we can unload all the packages from Liota daemon by unloading the base package edge_system/rpi/edge_systems.All the other packages are directly or indirectly dependent on it.
 
-We can unload all the packages from Liota daemon by unloading the base package edge_system/rpi/edge_systems.
-
-All the other packages are directly or indirectly dependent on it.
 ```bash
 $ ./liotapkg.sh unload edge_system/rpi/edge_systems
 ```
