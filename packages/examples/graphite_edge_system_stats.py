@@ -68,9 +68,8 @@ class PackageClass(LiotaPackage):
         from liota.entities.metrics.metric import Metric
 
         # Acquire resources from registry
-        edge_system = copy.copy(registry.get("graphite_edge_system"))
+        reg_edge_system = copy.copy(registry.get("graphite_edge_system"))
         graphite = registry.get("graphite")
-        reg_edge_system = graphite.register(edge_system)
 
         # Get values from configuration file
         config_path = registry.get("package_conf")
