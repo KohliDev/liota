@@ -1,4 +1,4 @@
-In this tutorial, we'll cover the basic flow of running Liota on Raspberry Pi. Liota follows the IoT three-tier model, it resides on the IoT gateway and allows you to collect & publish metrics from devices and gateway to the DCC (Data Center Component) of your choice. We'll be collecting edge system (RPi) stats, temperature & humidity from the DHT22 sensor and will publish them to Graphite DCC.
+In this tutorial, we'll cover the basic flow of running Liota on Raspberry Pi. Liota follows the IoT three-tier model, it resides on the IoT gateway and allows you to collect & publish metrics from devices and gateway to the DCC (Data Center Component) of your choice. We'll be collecting edge system (RPi) stats, temperature & humidity metrics from the DHT22 sensor and will publish the values to Graphite DCC.
 
 Hardware Required:
 
@@ -12,14 +12,16 @@ Wire the RaspberryPi and sensor as shown in the picture below, if the external d
 
 ![RPi](../images/rpi_circuit_diagram.png)
 
-Update the Raspbian OS:
+You can switch to root user or use "sudo" command as required, update the Raspbian OS:
 ```bash
+$ su 
+Password:
 $ sudo apt-get update
 ```
 
 Set the time zone correctly:
 ```bash
-$ date -s "18 Jun 2017 09:14:00"
+$ sudo date -s "18 Jun 2017 09:14:00 UTC"
 ```
 
 To communicate with the sensor and collect temperature & humidity metric we'll be using Adafruit_Python_DHT library.
@@ -44,7 +46,7 @@ $ sudo /home/pi/sources/Adafruit_Python_DHT/examples/AdafruitDHT.py 2302 4
 
 Post this step we'll install liota
 ```bash
-$ pip install liota
+$ sudo pip install liota
 ```
 
 Some tasks to understand the liota directory structure
@@ -78,18 +80,18 @@ For this tutorial we have pre-created the packages required, users of Liota can 
 
 ![iot_data_flow](../images/iot_data_flow.png)
 
-1. dh22_device: Device Package
+1. **dh22_device:** Device Package
 
-2. Adafruit: It is the library used to collect the value from the DHT22 sensor over here it acts as the device communication protocol.
+2. **Adafruit:** It is the library used to collect the value from the DHT22 sensor over here it acts as the device communication protocol.
 
-3. edge_system/rpi/edge_systems: Raspberry Pi Edge System Package
+3. **edge_systems/rpi/edge_system:** Raspberry Pi Edge System Package
 
-4. graphite_rpi_stats: Package collect the CPU utilization, networking and disk usage stats from RPi.
+4. **graphite_rpi_stats:** Package collect the CPU utilization, networking and disk usage stats from RPi.
    graphite_dht22_metrics: It is the package which defines the metrics Temperature and Humidity to be collected. 
 
-5. Socket: Package which uses Socket as the DCC_Comms to publish data to DCC
+5. **Socket:** Package which uses Socket as the DCC_Comms to publish data to DCC
 
-6. graphite_rpi: It is the Liota package which defines Graphite DCC and registers RPi Edge System.
+6. **graphite_rpi:** It is the Liota package which defines Graphite DCC and registers RPi Edge System.
                  (https://graphite.readthedocs.io/en/latest/)
 
 For this tutorial, we'll require installing the Graphite DCC in a docker container. It can be installed on a separate machine/VM to which RPi has the networking access.
@@ -127,13 +129,13 @@ $ cd /etc/liota/packages
 Start Liota Package Manager:
 
 ```bash
-$ python liotad.py &
+$ sudo python liotad.py &
 ```
 Open a new ssh session to the RPi and list the loaded package:
 ```bash
 $ tail –f /var/log/liota/liota.log
 
-$./liotapkg.sh list pkg
+$ sudo ./liotapkg.sh list pkg
 ```
 
 Modify sampleProp.conf:
@@ -142,7 +144,7 @@ $ cd /etc/liota/packages/
 $ sudo pico sampleProp.conf
 (use editor of your choice)
 
-Replace “Edge-System-Name” & “Device-Name” with some unique name (maybe your first-last-name)
+Replace “EdgeSystem-Name” & “Device-Name” with some unique name (maybe your first-last-name)
 
 GraphiteIP is “127.0.0.1” or the machine IP address (in quotes)
 
@@ -151,7 +153,7 @@ GraphitePort is 2003 (without quotes)
 
 Load the RPi Edge_system package:
 ```bash
-$ ./liotapkg.sh load edge_system/rpi/edge_system
+$ sudo ./liotapkg.sh load edge_system/rpi/edge_system
 ```
 
 Load the Graphite package:
@@ -161,19 +163,19 @@ $ sudo ./liotapkg.sh load graphite
 
 After we have loaded the DCC package we will load the edge_system stats package:
 ```bash
-$ ./liotapkg.sh load examples/graphite_rpi_stats
+$ sudo ./liotapkg.sh load examples/graphite_rpi_stats
 ```
 
 Load the DHT22 Device package and the stats to be published to Graphite DCC:
 ```bash
-$ ./liotapkg.sh load examples/dht22_device
+$ sudo ./liotapkg.sh load examples/dht22_device
 
-$ ./liotapkg.sh load examples/graphite_dht22_sensor
+$ sudo ./liotapkg.sh load examples/graphite_dht22_sensor
 ```
 
 List all the loaded Liota packages:
 ```bash
-$ ./liotapkg.sh list pkg
+$ sudo ./liotapkg.sh list pkg
 ```
 
 After loading all the packages look at Graphite and find your metric, refresh the browser the stats might appear after a minute.
@@ -181,7 +183,7 @@ After loading all the packages look at Graphite and find your metric, refresh 
 Package_Dependencies are defined at the top of the package.Finally, we can unload all the packages from Liota daemon by unloading the base package edge_system/rpi/edge_systems.All the other packages are directly or indirectly dependent on it.
 
 ```bash
-$ ./liotapkg.sh unload edge_system/rpi/edge_systems
+$ sudo ./liotapkg.sh unload edge_system/rpi/edge_systems
 ```
 
 Happy Hacking!!!
