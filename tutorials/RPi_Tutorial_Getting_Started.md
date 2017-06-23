@@ -64,7 +64,7 @@ $ cd /etc/liota/examples
 (look around for Liota examples)
 
 $ cd /etc/liota/packages
-(we`ll use this examples)
+(we`ll use this package examples)
 
 $ cd /etc/liota/packages/examples
 (pkg Mgr examples)
@@ -153,26 +153,42 @@ GraphiteIP is “127.0.0.1” or the machine IP address (in quotes)
 GraphitePort is 2003 (without quotes)
 ```
 
-Load the RPi Edge_system package:
+Before loading the packages, we'll generate their SHA-1 hash and then load them with message digest so that they can be verified and then loaded securely.
+Let's start with loading the RPi Edge_system package:
 ```bash
-$ sudo ./liotapkg.sh load edge_systems/rpi/edge_system
+$ sha1sum edge_systems/rpi/edge_system.py
+bc2bebc5fec770b9df4a67bc6c410c33ecf2513b  edge_systems/rpi/edge_system.py
+
+$ sudo ./liotapkg.sh load edge_systems/rpi/edge_system bc2bebc5fec770b9df4a67bc6c410c33ecf2513b
 ```
 
 Load the Graphite package:
 ```bash
-$ sudo ./liotapkg.sh load graphite
+$ sha1sum graphite_rpi.py
+7df53502405f5adcc3f4353167b9ce3f70e5e810  graphite_rpi.py
+
+$ sudo ./liotapkg.sh load graphite_rpi 7df53502405f5adcc3f4353167b9ce3f70e5e810
 ```
 
 After we have loaded the DCC package we'll load the edge_system stats package:
 ```bash
-$ sudo ./liotapkg.sh load examples/graphite_rpi_stats
+$ sha1sum examples/graphite_rpi_stats.py
+c6f72551c961fb0c871e3b781774abbd18900ad7  examples/graphite_rpi_stats.py
+
+$ sudo ./liotapkg.sh load examples/graphite_rpi_stats c6f72551c961fb0c871e3b781774abbd18900ad7
 ```
 
 Load the DHT22 Device package and the stats to be published to Graphite DCC:
 ```bash
-$ sudo ./liotapkg.sh load examples/dht22_device
+$ sha1sum examples/dht22_device.py
+734345f7d2d420c28ff0aad745b31ea84dad1921  examples/dht22_device.py
 
-$ sudo ./liotapkg.sh load examples/graphite_dht22_sensor
+$ sudo ./liotapkg.sh load examples/dht22_device 734345f7d2d420c28ff0aad745b31ea84dad1921
+
+$ sha1sum examples/graphite_dht22_metrics.py
+0e1ff0a1c69f4401f6a8859a200756cb7b577b72  examples/graphite_dht22_metrics.py
+
+$ sudo ./liotapkg.sh load examples/graphite_dht22_metrics 0e1ff0a1c69f4401f6a8859a200756cb7b577b72
 ```
 
 List all the loaded Liota packages:
