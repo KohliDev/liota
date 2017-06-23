@@ -191,6 +191,8 @@ $ sudo ./liotapkg.sh list pkg
 
 After loading all the packages look at Graphite and find your metric, refresh the browser the stats might appear after a minute.
 
+![graphite_screenshot](../images/graphite_screenshot.png)
+
 Package_Dependencies are defined at the top of the package.Finally, we can unload all the packages from Liota daemon by unloading the base package edge_systems/rpi/edge_system, all the other packages are directly or indirectly dependent on it.
 
 ```sh
