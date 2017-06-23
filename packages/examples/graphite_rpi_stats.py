@@ -67,17 +67,17 @@ class PackageClass(LiotaPackage):
         import copy
         from liota.entities.metrics.metric import Metric
 
-        # Acquire resources from registry
-        reg_edge_system = copy.copy(registry.get("graphite_edge_system"))
-        graphite = registry.get("graphite")
-
         # Get values from configuration file
         config_path = registry.get("package_conf")
         config = read_user_config(config_path + '/sampleProp.conf')
 
+        # Acquire resources from registry
+        reg_edge_system = copy.copy(registry.get("graphite_edge_system"))
+        graphite = registry.get("graphite")
+
         # Create metrics
         self.metrics = []
-        metric_name = "EdgeSystem.CPU_Utilization"
+        metric_name = config['EdgeSystemName']+".CPU_Utilization"
         metric_cpu_utilization = Metric(name=metric_name,
                          unit=None, interval=5,
                          aggregation_size=1,
@@ -88,7 +88,7 @@ class PackageClass(LiotaPackage):
         reg_metric_cpu_utilization.start_collecting()
         self.metrics.append(reg_metric_cpu_utilization)
 
-        metric_name = "EdgeSystem.CPU_Process"
+        metric_name = config['EdgeSystemName']+".CPU_Process"
         metric_cpu_procs = Metric(name=metric_name,
                          unit=None, interval=5,
                          aggregation_size=1,
@@ -99,7 +99,7 @@ class PackageClass(LiotaPackage):
         reg_metric_cpu_procs.start_collecting()
         self.metrics.append(reg_metric_cpu_procs)
 
-        metric_name = "EdgeSystem.Disk_Busy_Stats"
+        metric_name = config['EdgeSystemName']+".Disk_Busy_Stats"
         metric_disk_busy_stats = Metric(name=metric_name,
                          unit=None, interval=5,
                          aggregation_size=1,
@@ -110,7 +110,7 @@ class PackageClass(LiotaPackage):
         reg_metric_disk_busy_stats.start_collecting()
         self.metrics.append(reg_metric_disk_busy_stats)
 
-        metric_name = "EdgeSystem.Network_Bytes_Received"
+        metric_name = config['EdgeSystemName']+".Network_Bytes_Received"
         metric_network_bytes_received = Metric(name=metric_name,
                          unit=None, interval=5,
                          aggregation_size=1,

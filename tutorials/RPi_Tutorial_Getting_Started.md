@@ -34,7 +34,7 @@ Install the Adafruit Library:
 ```bash
 $ sudo mkdir -p /home/pi/sources
 $ cd /home/pi/sources
-$ git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+$ sudo git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 $ cd Adafruit_Python_DHT
 $ sudo python setup.py install
 ```
@@ -134,7 +134,7 @@ $ sudo python liotad.py &
 ```
 Open a new ssh session to the RPi and list the loaded package:
 ```bash
-$ tail –f /var/log/liota/liota.log
+$ tail -f /var/log/liota/liota.log
 
 (In the first shell)
 $ sudo ./liotapkg.sh list pkg

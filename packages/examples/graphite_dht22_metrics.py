@@ -31,6 +31,7 @@
 # ----------------------------------------------------------------------------#
 
 from liota.core.package_manager import LiotaPackage
+from liota.lib.utilities.utility import read_user_config
 import pint
 
 ureg = pint.UnitRegistry()
@@ -50,6 +51,10 @@ class PackageClass(LiotaPackage):
     def run(self, registry):
         from liota.entities.metrics.metric import Metric
 
+        # Get values from configuration file
+        config_path = registry.get("package_conf")
+        config = read_user_config(config_path + '/sampleProp.conf')
+
         # Acquire resources from registry
         graphite = registry.get("graphite")
         dht22_device = registry.get("dht22_device")
@@ -57,7 +62,7 @@ class PackageClass(LiotaPackage):
 
         # Create temperature metric
         self.metrics = []
-        metric_temper = "model.dht22_device.temperature"
+        metric_temper = config['DeviceName']+".dht22_device.temperature"
         thermistor_temper = Metric(
             name=metric_temper,
             unit=ureg.degC,
@@ -72,7 +77,7 @@ class PackageClass(LiotaPackage):
         self.metrics.append(reg_thermistor_temper)
 
         # Create humidity metric
-        metric_humidity = "model.dht22_device.humidity"
+        metric_humidity = config['DeviceName']+".dht22_device.humidity"
         humidity_device = Metric(
             name=metric_humidity,
             unit=None,
