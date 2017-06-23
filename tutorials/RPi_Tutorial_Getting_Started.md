@@ -104,7 +104,7 @@ https://docs.docker.com/engine/installation/
 Post installation Graphite container can be deployed with help of this command:
 
 ```sh
-docker run -d\
+$ docker run -d\
  --name graphite\
  --restart=always\
  -p 80:80\
@@ -117,7 +117,7 @@ docker run -d\
 
 Now, let's start the Liota package manager and load the packages required to publish data from the devices to Gateway and then to DCC.
 
-```sh
+```bash
 $ cd /etc/liota/packages
 ```
 Start Liota Package Manager:
