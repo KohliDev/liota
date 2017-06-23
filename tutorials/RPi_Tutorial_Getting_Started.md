@@ -117,7 +117,7 @@ $ docker run -d\
 
 Now, let's start the Liota package manager and load the packages required to publish data from the devices to Gateway and then to DCC.
 
-```bash
+```sh
 $ cd /etc/liota/packages
 ```
 Start Liota Package Manager:
