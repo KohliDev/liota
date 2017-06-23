@@ -12,7 +12,7 @@ Wire the RaspberryPi and sensor as shown in the picture below, if the external d
 
 ![RPi](../images/rpi_circuit_diagram.png)
 
-You can switch to root user or use "sudo" command as required, update the Raspbian OS:
+In the RaspberryPi shell you can switch to root user or use "sudo" command as required, update the Raspbian OS:
 ```bash
 $ su 
 Password:
@@ -32,19 +32,19 @@ $ sudo apt-get install -y build-essential python-dev git
 ```
 Install the Adafruit Library:
 ```bash
-$ mkdir -p /home/pi/sources
+$ sudo mkdir -p /home/pi/sources
 $ cd /home/pi/sources
 $ git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 $ cd Adafruit_Python_DHT
 $ sudo python setup.py install
 ```
 
-You can test if the library  properly installed by running the below command, you'll get the temperature and humidity as the output at the current point of time:
+You can test if the library is properly installed by running the below command, you'll be getting the temperature and the humidity as the output at the current point of time:
 ```bash
 $ sudo /home/pi/sources/Adafruit_Python_DHT/examples/AdafruitDHT.py 2302 4
 ```
 
-Post this step we'll install liota
+Post this step let's install liota
 ```bash
 $ sudo pip install liota
 ```
@@ -76,25 +76,26 @@ $ cd /etc/liota/packages/edge_systems
 Liota has the package manager feature which allows to dynamically load/unload the packages representing the fundamental building blocks of Liota as shown in the figure below.
 
 
-For this tutorial we have pre-created the packages required, users of Liota can reference them in future to create their packages as per the IoT use case. Post-Liota installation the packages can be found in the following directory “/etc/liota/packages”.
+For this tutorial we have pre-created the packages required, users of Liota can reference them in future to create their own packages as per the IoT use case. Post-Liota installation the packages can be found in the following directory “/etc/liota/packages”.
 
 ![iot_data_flow](../images/iot_data_flow.png)
 
 1. **dh22_device:** Device Package
 
-2. **Adafruit:** It is the library used to collect the value from the DHT22 sensor over here it acts as the device communication protocol.
+2. **Adafruit:** It is the library used to collect the values from the DHT22 sensor, over here it acts as the device communication protocol.
 
 3. **edge_systems/rpi/edge_system:** Raspberry Pi Edge System Package
 
-4. **graphite_rpi_stats:** Package collect the CPU utilization, networking and disk usage stats from RPi.
-   graphite_dht22_metrics: It is the package which defines the metrics Temperature and Humidity to be collected. 
+4. **graphite_rpi_stats:** This package collects the CPU utilisation, networking and disk usage stats from RPi.
+   
+   **graphite_dht22_metrics:** It is the package which defines the metrics temperature and humidity to be collected. 
 
-5. **Socket:** Package which uses Socket as the DCC_Comms to publish data to DCC
+5. **Socket:** Package uses Socket as the DCC_Comms to publish data to DCC
 
-6. **graphite_rpi:** It is the Liota package which defines Graphite DCC and registers RPi Edge System.
+6. **graphite_rpi:** This package defines Graphite DCC and registers RPi Edge System.
                  (https://graphite.readthedocs.io/en/latest/)
 
-For this tutorial, we'll require installing the Graphite DCC in a docker container. It can be installed on a separate machine/VM to which RPi has the networking access.
+For this tutorial, we'll require installing the Graphite DCC in a docker container. It can be installed on a separate machine/VM to which RPi has networking access.
 
 You need to install the Docker engine in the machine/VM preferably Ubuntu 16.04 OS. The instruction in the below link can be followed to install Docker CE:
 
@@ -102,7 +103,7 @@ https://docs.docker.com/engine/installation/
 
 If in case, you don't have a separate VM or a machine for the Graphite Docker container then it can be deployed locally on the RPi.
 
-Docker Engine can be installed on RPi as per the instructions in below link:
+Docker Engine can be installed on RPi as per the instructions in the below link:
 
 https://www.raspberrypi.org/blog/docker-comes-to-raspberry-pi/
 
@@ -121,7 +122,7 @@ $ docker run -d
  hopsoft/graphite-statsd
 ```
 
-Now, let's start the Liota package manager and load the packages required to publish data from the device to Gateway and then to DCC.
+Now, let's start the Liota package manager and load the packages required to publish data from the devices to Gateway and then to DCC.
 
 ```bash
 $ cd /etc/liota/packages
@@ -135,6 +136,7 @@ Open a new ssh session to the RPi and list the loaded package:
 ```bash
 $ tail –f /var/log/liota/liota.log
 
+(In the first shell)
 $ sudo ./liotapkg.sh list pkg
 ```
 
@@ -153,7 +155,7 @@ GraphitePort is 2003 (without quotes)
 
 Load the RPi Edge_system package:
 ```bash
-$ sudo ./liotapkg.sh load edge_system/rpi/edge_system
+$ sudo ./liotapkg.sh load edge_systems/rpi/edge_system
 ```
 
 Load the Graphite package:
@@ -161,7 +163,7 @@ Load the Graphite package:
 $ sudo ./liotapkg.sh load graphite
 ```
 
-After we have loaded the DCC package we will load the edge_system stats package:
+After we have loaded the DCC package we'll load the edge_system stats package:
 ```bash
 $ sudo ./liotapkg.sh load examples/graphite_rpi_stats
 ```
@@ -180,10 +182,10 @@ $ sudo ./liotapkg.sh list pkg
 
 After loading all the packages look at Graphite and find your metric, refresh the browser the stats might appear after a minute.
 
-Package_Dependencies are defined at the top of the package.Finally, we can unload all the packages from Liota daemon by unloading the base package edge_system/rpi/edge_systems.All the other packages are directly or indirectly dependent on it.
+Package_Dependencies are defined at the top of the package.Finally, we can unload all the packages from Liota daemon by unloading the base package edge_systems/rpi/edge_system, all the other packages are directly or indirectly dependent on it.
 
 ```bash
-$ sudo ./liotapkg.sh unload edge_system/rpi/edge_systems
+$ sudo ./liotapkg.sh unload edge_systems/rpi/edge_system
 ```
 
 Happy Hacking!!!
