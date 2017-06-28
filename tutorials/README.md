@@ -150,7 +150,9 @@ considered as entities in Liota terminology), it require following arguments for
    name, 
    entity_id,
    entity_type
+```
 
+```sh
 RegisteredEntity: Represents the registered (Device, Edge System & Metric) entity object. Requires
 following argument for initializing: 
    entity, 
