@@ -95,6 +95,89 @@ For this tutorial we have pre-created the packages required, users of Liota can 
 6. **graphite_rpi:** This package defines Graphite DCC and registers RPi Edge System.
                  (https://graphite.readthedocs.io/en/latest/)
 
+# LIOTA Abstractions
+The basic abstraction classes provided by Liota which can help developers to develop their own Liota components:
+
+```sh
+dcc_comms:  Abstract class for all the DCC communications.
+
+	_connect(): Establish connection to DCC
+   
+	_disconnect(): Disconnecting the connection to DCC
+   
+	send(message,msg_attr): Publish sensor values to DCC, msg_attr is used 
+        to hold the specific parameters required to publish the data
+   
+	receive(msg_attr): Receive messages from the DCC, msg_attr is used to specify the required parameters
+```
+
+```sh
+device_comms: Abstract class for all device communications
+
+	_connect(): Establish connection to device
+   
+	_disconnect(): Disconnect the connection to device
+   
+	send(message): Publish message to device if it receives messages or acts as an actuator
+   
+	receive(): Receive the data from the device
+```  
+
+```sh
+DCC: Abstract class for all DCC's
+
+   register(entity_obj): Register entity object with DCC
+   
+   create_relationship(reg_entity_parent, reg_entity_child): Create child-parent relationship 
+   between two entity objects
+   
+   _format_data(reg_metric): Formats the collected reg_metric(Registered Metric) data, sensor 
+   values as per the DCC format before publishing
+   
+   publish(reg_metric):  An instance method used to publish the data to DCC, it also uses 
+   reg_metric.msg_attr for holding the various parameters which might be required to publish 
+   the message.
+   
+   set_properties(reg_entity, properties): Used to set properties for the required reg_entity.
+   
+   unregister(entity_obj): Unregister the entity object from DCC
+```
+
+```sh
+Entity: Abstract base class for all the entities(Device, Edge System and Metric are 
+considered as entities in Liota terminology), it require following arguments for initializing:
+   name, 
+   entity_id,
+   entity_type
+
+RegisteredEntity: Represents the registered (Device, Edge System & Metric) entity object. Requires following
+argument for initializing: 
+   entity, 
+   dcc,
+   reg_entity_id(unique identifier received from the DCC post registration)
+ 
+   set_properties(properties): instance method to set properties for the registered entity object
+```
+
+```sh
+Device: Abstract base class for the all the edge systems (Gateways), requires following argument for initializing:
+      
+   entity_id(locally generated id using Liota), 
+   entity_type: hard coded value to “EdgeSystem”
+```
+
+```sh
+Metric: Defines the metric object which requires following argument for initializing:
+   name, 
+   unit (unit defined for metric, liota uses by default Pint library to set SI units),
+   interval (time interval required to collect the metric value), 
+   aggregation_Size( the number of values to be aggregated before publishing to DCC),
+   sampling_function ( Method responsible for collecting the sensor values)
+   
+   register (dcc_obj, reg_entity_id): this method is used to return the registered metric object requires 
+   parameters dcc_obj(DCC Object) & reg_entity_id (Registered entity unique identifier)
+```
+
 For this tutorial, we'll require installing the Graphite DCC in a docker container. It can be installed on a separate machine/VM to which RPi has networking access.
 
 You need to install the Docker engine in the machine/VM preferably Ubuntu 16.04 OS. Follow the instructions in the below link to install Docker CE:
