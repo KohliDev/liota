@@ -101,26 +101,27 @@ The basic abstraction classes provided by Liota which can help developers to dev
 ```sh
 dcc_comms:  Abstract class for all the DCC communications.
 
-	_connect(): Establish connection to DCC
+   _connect(): Establish connection to DCC
    
-	_disconnect(): Disconnecting the connection to DCC
+   _disconnect(): Disconnecting the connection to DCC
    
-	send(message,msg_attr): Publish sensor values to DCC, msg_attr is used 
-        to hold the specific parameters required to publish the data
+   send(message,msg_attr): Publish sensor values to DCC, msg_attr is used 
+   to hold the specific parameters required to publish the data
    
-	receive(msg_attr): Receive messages from the DCC, msg_attr is used to specify the required parameters
+   receive(msg_attr): Receive messages from the DCC, msg_attr is used to 
+   specify the required parameters
 ```
 
 ```sh
 device_comms: Abstract class for all device communications
 
-	_connect(): Establish connection to device
+   _connect(): Establish connection to device
    
-	_disconnect(): Disconnect the connection to device
+   _disconnect(): Disconnect the connection to device
    
-	send(message): Publish message to device if it receives messages or acts as an actuator
+   send(message): Publish message to device if it receives messages or acts as an actuator
    
-	receive(): Receive the data from the device
+   receive(): Receive the data from the device
 ```  
 
 ```sh
@@ -150,8 +151,8 @@ considered as entities in Liota terminology), it require following arguments for
    entity_id,
    entity_type
 
-RegisteredEntity: Represents the registered (Device, Edge System & Metric) entity object. Requires following
-argument for initializing: 
+RegisteredEntity: Represents the registered (Device, Edge System & Metric) entity object. Requires
+following argument for initializing: 
    entity, 
    dcc,
    reg_entity_id(unique identifier received from the DCC post registration)
@@ -160,7 +161,8 @@ argument for initializing:
 ```
 
 ```sh
-Device: Abstract base class for the all the edge systems (Gateways), requires following argument for initializing:
+Device: Abstract base class for the all the edge systems (Gateways), requires following argument 
+for initializing:
       
    entity_id(locally generated id using Liota), 
    entity_type: hard coded value to “EdgeSystem”
@@ -174,8 +176,8 @@ Metric: Defines the metric object which requires following argument for initiali
    aggregation_Size( the number of values to be aggregated before publishing to DCC),
    sampling_function ( Method responsible for collecting the sensor values)
    
-   register (dcc_obj, reg_entity_id): this method is used to return the registered metric object requires 
-   parameters dcc_obj(DCC Object) & reg_entity_id (Registered entity unique identifier)
+   register (dcc_obj, reg_entity_id): this method is used to return the registered metric object 
+   requires parameters dcc_obj(DCC Object) & reg_entity_id (Registered entity unique identifier)
 ```
 
 For this tutorial, we'll require installing the Graphite DCC in a docker container. It can be installed on a separate machine/VM to which RPi has networking access.
