@@ -12,6 +12,8 @@ Wire the RaspberryPi and sensor as shown in the picture below, if the external d
 
 ![RPi](../images/rpi_circuit_diagram.png)
 
+[Reference](http://www.home-automation-community.com/temperature-and-humidity-from-am2302-dht22-sensor-displayed-as-chart/)
+
 In the RaspberryPi shell you can switch to root user or use "sudo" command as required, update the Raspbian OS:
 ```sh
 $ su 

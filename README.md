@@ -40,10 +40,6 @@ Liota supports plain old BSD sockets, WebSocket and MQTT communication protocols
 ## Package Manager
 Liota applications can be broken into small pieces that can be loaded and unloaded into a running liota process. We recommend putting the EdgeSystems, Devices, Metrics and DCC(s) in separate packages. Then each construct can be loaded and unloaded at will. See the [README](/packages) in the package directory for complete details.
 
-# Getting Started Guide
-
-Do you have a RaspberryPi and want to try out Liota. Please follow the steps in this [tutorial link](/tutorials).
-
 ## Device Discovery
 Liota SDK provides users a way to discover new devices at run-time through a dedicated discovery thread. The discovery thread could listen on a list of end points by spinning up a listening thread for each of them. Currently, Liota supports 4 kinds of end points: MQTT, COAP, Socket, and Named Pipe. However, because of security consideration on edge system, currently only MQTT and Named Pipe are allowed, especially Named Pipe is only accessible to its owner user.
 
@@ -85,7 +81,11 @@ In general, liota can be installed with:
   $ sudo pip install liota
 ```
 
-It requires a Python 2.7 environment already installed.
+It requires a Python 2.7.9+ environment already installed.
+
+# Getting Started Guide
+
+Do you have a RaspberryPi and want to try out Liota. Please follow the steps in this [tutorial link](/tutorials).
 
 ## Autostarting Liota Daemon
 For starting liotad.py in background automatically at reboot perform the following steps:
