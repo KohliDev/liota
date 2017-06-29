@@ -38,11 +38,11 @@ Liota supports plain old BSD sockets, WebSocket and MQTT communication protocols
 * TLSConf class encapsulates parameters related to TLS configuration.
 
 ## Package Manager
-Liota applications can be broken into small pieces that can be loaded and unloaded into a running liota process. We recommend putting the EdgeSystems, Devices, Metrics and DCC(s) in separate packages. Then each construct can be loaded and unloaded at will. See the [README](https://github.com/KohliDev/liota/tree/master/packages) in the package directory for complete details.
+Liota applications can be broken into small pieces that can be loaded and unloaded into a running liota process. We recommend putting the EdgeSystems, Devices, Metrics and DCC(s) in separate packages. Then each construct can be loaded and unloaded at will. See the [README](/packages) in the package directory for complete details.
 
 # Getting Started Guide
 
-Do you have a RaspberryPi and want to try out Liota. Please follow the steps in this [tutorial link](https://github.com/KohliDev/liota/blob/thermistor_tutorial/tutorials).
+Do you have a RaspberryPi and want to try out Liota. Please follow the steps in this [tutorial link](/tutorials).
 
 ## Device Discovery
 Liota SDK provides users a way to discover new devices at run-time through a dedicated discovery thread. The discovery thread could listen on a list of end points by spinning up a listening thread for each of them. Currently, Liota supports 4 kinds of end points: MQTT, COAP, Socket, and Named Pipe. However, because of security consideration on edge system, currently only MQTT and Named Pipe are allowed, especially Named Pipe is only accessible to its owner user.
@@ -63,7 +63,7 @@ The json message from devices starts with Device Type and comprises a dictionary
 
 We will concatenate the type and unique id to LM35_12345 and use this as the name to register the device.
 
-See the [README](https://github.com/KohliDev/liota/tree/master/packages/dev_disc) in the dev_disc directory under package directory for complete usage details.
+See the [README](/packages/dev_disc) in the dev_disc directory under package directory for complete usage details.
 
 ## SI Units
 Liota supports SI units and the conversion of the units with help of Pint library which is included in liota package to provide developers the capability to use SI units in their code. We have also included the example [simulated_graphite_temp.py](https://github.com/vmware/liota/blob/master/examples/simulated_graphite_temp.py) which uses the library to convert temperature value from Celsius to Fahrenheit and Kelvin. More details on the usage of the Pint library and conversion of units can be found at this link:
