@@ -87,6 +87,8 @@ It requires a Python 2.7.9+ environment already installed.
 
 Do you have a RaspberryPi and want to try out Liota. Please follow the steps in this [tutorial link](/tutorials).
 
+![iot_data_flow](/images/iot_data_flow.png)
+
 ## Autostarting Liota Daemon
 For starting liotad.py in background automatically at reboot perform the following steps:
 
