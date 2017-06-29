@@ -157,7 +157,7 @@ RegisteredEntity: Represents the registered (Device, Edge System & Metric) entit
 following argument for initializing: 
    entity, 
    dcc,
-   reg_entity_id(unique identifier received from the DCC post registration)
+   reg_entity_id: unique identifier received from the DCC post registration
  
    set_properties(properties): instance method to set properties for the registered entity object
 ```
@@ -165,18 +165,17 @@ following argument for initializing:
 ```sh
 Device: Abstract base class for the all the edge systems (Gateways), requires following argument 
 for initializing:
-      
-   entity_id(locally generated id using Liota), 
+   entity_id: locally generated id using Liota,
    entity_type: hard coded value to “EdgeSystem”
 ```
 
 ```sh
 Metric: Defines the metric object which requires following argument for initializing:
-   name, 
-   unit (unit defined for metric, liota uses by default Pint library to set SI units),
-   interval (time interval required to collect the metric value), 
-   aggregation_Size( the number of values to be aggregated before publishing to DCC),
-   sampling_function ( Method responsible for collecting the sensor values)
+   name: metric name,
+   unit: unit defined for metric, liota uses by default Pint library to set SI units,
+   interval: time interval required to collect the metric value,
+   aggregation_Size: the number of values to be aggregated before publishing to DCC,
+   sampling_function: Method responsible for collecting the sensor values
    
    register (dcc_obj, reg_entity_id): this method is used to return the registered metric object 
    requires parameters dcc_obj(DCC Object) & reg_entity_id (Registered entity unique identifier)
@@ -276,7 +275,12 @@ List all the loaded Liota packages:
 $ sudo ./liotapkg.sh list pkg
 ```
 
-After loading all the packages look at Graphite and find your metric, refresh the browser the stats might appear after a minute.
+After loading all the packages look at Graphite and find your metric, refresh the browser the stats might appear after a minute:
+
+http://graphite-ip-address:8080
+
+http://graphite-ip-address:8080/dashboard
+
 
 ![graphite_screenshot](../images/graphite_screenshot.png)
 

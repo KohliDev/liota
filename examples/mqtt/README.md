@@ -1,6 +1,6 @@
 # Using MQTT as Transport in LIOTA
 
-LIOTA offers MQTT protocol as transport at both Device & DCC ends via [MqttDeviceComms](https://github.com/vmware/liota/blob/master/liota/device_comms/mqtt_device_comms.py) & ![MqttDccComms](/liota/dcc_comms/mqtt_dcc_comms.py).
+LIOTA offers MQTT protocol as transport at both Device & DCC ends via [MqttDeviceComms](https://github.com/vmware/liota/blob/master/liota/device_comms/mqtt_device_comms.py) & [MqttDccComms](/liota/dcc_comms/mqtt_dcc_comms.py).
 
 
 ## QoS
@@ -46,7 +46,7 @@ can be referred from [Property File](https://github.com/vmware/liota/blob/master
 
 
 **NOTE:**
-If **Option (a)** is used, `generated_local_uuid_of_edge_system` will be written to a file available at path **uuid_path** as specified in ![liota.conf](/config/liota.conf) file.
+If **Option (a)** is used, `generated_local_uuid_of_edge_system` will be written to a file available at path **uuid_path** as specified in [liota.conf](/config/liota.conf) file.
 Users can refer this file to get the uuid for subscribing.
 
 

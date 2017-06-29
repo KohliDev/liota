@@ -31,29 +31,44 @@ The abstract class DCCComms represents communication protocols between edge syst
 The abstract class DCC represents an application in a data-center. It is potentially the most important and complex abstraction of liota. It provides flexibility to developers for choosing the data-center components they need and using API's provided by liota. With help of this abstraction developers may build custom solutions. The abstract class states basic methods and encapsulates them into unified common API's required to send data to various DCC's. Graphite and Project Ice are currently the data-center components supported with AWS, BlueMix and ThingWorx to come soon. New DCC's can easily be integrated in the abstraction.
 
 ## Transports
-Liota supports plain old BSD sockets, WebSocket and MQTT communication protocols.  Refer [MQTT](https://github.com/vmware/liota/blob/master/examples/mqtt/README.md) to know more on different MQTT configuration options available.
+Liota supports plain old BSD sockets, WebSocket and MQTT communication protocols.  Refer [README](https://github.com/vmware/liota/blob/master/examples/mqtt) to know more on different MQTT configuration options available.
 
 ## Identity and TLS Configurations
 * Identity class encapsulates certificates or credentials related to a connection used at both DCC and Device side.
 * TLSConf class encapsulates parameters related to TLS configuration.
 
-
 ## Package Manager
-Liota applications can be broken into small pieces that can be loaded and unloaded into a running liota process. We recommend putting the EdgeSystems, Devices, Metrics and DCC(s) in separate packages. Then each construct can be loaded and unloaded at will. See the README in the package directory for complete details.
+Liota applications can be broken into small pieces that can be loaded and unloaded into a running liota process. We recommend putting the EdgeSystems, Devices, Metrics and DCC(s) in separate packages. Then each construct can be loaded and unloaded at will. See the [README](https://github.com/KohliDev/liota/tree/master/packages) in the package directory for complete details.
+
+# Getting Started Guide
+
+Do you have a RaspberryPi and want to try out Liota. Please follow the steps in this [tutorial link](https://github.com/KohliDev/liota/blob/thermistor_tutorial/tutorials).
 
 ## Device Discovery
 Liota SDK provides users a way to discover new devices at run-time through a dedicated discovery thread. The discovery thread could listen on a list of end points by spinning up a listening thread for each of them. Currently, Liota supports 4 kinds of end points: MQTT, COAP, Socket, and Named Pipe. However, because of security consideration on edge system, currently only MQTT and Named Pipe are allowed, especially Named Pipe is only accessible to its owner user.
 
-Assume there is a list of DeviceType-to-DCC Mappings, such as {TypeA:[DCC1-Package-Name, DCC2-Package-Name], TypeB:[DCC3-Package-Name]}. Listening thread waits for a json message from devices, registers new devices with each DCC in the mapping list, sets any properties, fills out device file for AW agent. AW agent enrolls discovered device and pushes content to bring the device to compliance.
+Assume there is a list of DeviceType-to-DCC Mappings, such as
+
+{TypeA:[DCC1-Package-Name, DCC2-Package-Name], TypeB:[DCC3-Package-Name]}.
+
+ Listening thread waits for a json message from devices, registers new devices with each DCC in the mapping list, sets any properties, fills out device file for AW agent. AW agent enrolls discovered device and pushes content to bring the device to compliance.
 
 The json message from devices starts with Device Type and comprises a dictionary, that is,
-{ 'DeviceType':{key1:value1,key2:value2, ..., keyn:valuen}} e.g., {LM35:{k1:v1,...,SN:12345,kn:vn}}. Assume there is specified unique key for each 'Type' of devices, e.g.,
-[{'Type':'LM35', 'UniqueKey':'SN'}]. We will concatenate the type and unique id to LM35_12345 and use this as the name to register the device.
 
-See the README in the dev_disc directory under package directory for complete usage details.
+{ 'DeviceType':{key1:value1,key2:value2, ..., keyn:valuen}} e.g., {LM35:{k1:v1,...,SN:12345,kn:vn}}.
+
+ Assume there is specified unique key for each 'Type' of devices, e.g.,
+
+[{'Type':'LM35', 'UniqueKey':'SN'}].
+
+We will concatenate the type and unique id to LM35_12345 and use this as the name to register the device.
+
+See the [README](https://github.com/KohliDev/liota/tree/master/packages/dev_disc) in the dev_disc directory under package directory for complete usage details.
 
 ## SI Units
-Liota supports SI units and the conversion of the units with help of Pint library which is included in liota package to provide developers the capability to use SI units in their code. We have also included the example [simulated_graphite_temp.py](https://github.com/vmware/liota/blob/master/examples/simulated_graphite_temp.py) which uses the library to convert temperature value from Celsius to Fahrenheit and Kelvin. More details on the usage of the Pint library and conversion of units can be found at this [link](https://pint.readthedocs.io/en/0.7.2/index.html).
+Liota supports SI units and the conversion of the units with help of Pint library which is included in liota package to provide developers the capability to use SI units in their code. We have also included the example [simulated_graphite_temp.py](https://github.com/vmware/liota/blob/master/examples/simulated_graphite_temp.py) which uses the library to convert temperature value from Celsius to Fahrenheit and Kelvin. More details on the usage of the Pint library and conversion of units can be found at this link:
+
+https://pint.readthedocs.io/en/0.7.2/index.html
 
 ## Liota - Future Enhancements
 Toward the goal of ubiquity for liota we plan to include the following enhancements:
@@ -157,9 +172,11 @@ Post-installation the sample codes for publishing the data to DCC can be found a
 
 Please look through the example code noting especially the files sampleProp.conf and dk300_edge_system_iotcc.py
 
-Then as an initial test you could bring up an instance of Graphite using the docker instructions found at this [link](https://github.com/hopsoft/docker-graphite-statsd).
+Then as an initial test you could bring up an instance of Graphite using the docker instructions found at this link:
 
-set the appropriate values in sampleProp.conf,
+https://github.com/hopsoft/docker-graphite-statsd
+
+Set the appropriate values in sampleProp.conf,
 ```bash
 GraphiteMetric = <a dot separated string> "Mymetric.foo.bar.random"
 GraphiteIP = <The IP address of the graphite instance you just brought up>

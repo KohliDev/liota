@@ -1,82 +1,104 @@
 # Device Discovery & Device Simulator
 Device Discovery consists of three parts: 
 
-(1) A DiscoveryThread that spawn out various Listener Threads, maintain global data structures and run discovery initialization/clean-up codes,
+1. A DiscoveryThread that spawn out various Listener Threads, maintain global data structures and run discovery initialization/clean-up codes,
 
-(2) Discovery Listener Threads which listen on one or more specific communication channels, which could be MQTT subscriber, Coap Server, Socket Server, or a Named Pipe Reader for now, to receive Messages from devices for discovering and registering devices, (However, because of security consideration on edge system, currently only MQTT subscriber and Named Pipe Reader are allowed)
+2. Discovery Listener Threads which listen on one or more specific communication channels, which could be MQTT subscriber, Coap Server, Socket Server, or a Named Pipe Reader for now, to receive Messages from devices for discovering and registering devices, (However, because of security consideration on edge system, currently only MQTT subscriber and Named Pipe Reader are allowed)
 
-(3) Discovery Messenger Threads which listen on a named pipe for now, to provide with an interface for users and automated agents to send commands to Discovery Thread.
+3. Discovery Messenger Threads which listen on a named pipe for now, to provide with an interface for users and automated agents to send commands to Discovery Thread.
 
 Device Discovery will get configuration from liota.conf and initialize the data structures when its own module (`device_discovery.py`) is imported. Once imported, CmdMessengerThread will start listening on a named pipe and DiscoveryThread will spawn out Listener threads.
 
 Device Simulator is a separate debugging and simulation tool for device discovery, which consists of three parts:
 
-(1) A SimulatorThread that spawns out various Simulator Threads, maintain global data structures and run simulator initialization/clean-up codes,
+1. A SimulatorThread that spawns out various Simulator Threads, maintain global data structures and run simulator initialization/clean-up codes,
 
-(2) Device Simulator Threads which make use of one or more specific communication channels, which could be MQTT Publisher, Coap Client, Socket Client, or a Named Pipe Writer for now, to send Messages to Liota Device Discovery Listeners for advertising device information, (However, because of security consideration on edge system, currently only MQTT Publisher and Named Pipe Writer are allowed)
+2. Device Simulator Threads which make use of one or more specific communication channels, which could be MQTT Publisher, Coap Client, Socket Client, or a Named Pipe Writer for now, to send Messages to Liota Device Discovery Listeners for advertising device information, (However, because of security consideration on edge system, currently only MQTT Publisher and Named Pipe Writer are allowed)
 
-(3) Command Messenger Threads which listen on a named pipe for now, to provide with an interface for users and automated agents to send commands to Simulator Thread.
+3. Command Messenger Threads which listen on a named pipe for now, to provide with an interface for users and automated agents to send commands to Simulator Thread.
 
 Device Simulator will get configuration from liota.conf and initialize the data structures when its own module (`discovery_simulator.py`) is imported. Once imported, CmdMessengerThread will start listening on a named pipe and DeviceSimulatorThread will spawn out Simulator threads.
 
-### How to Start Device Discovery
+# Configuration to Start Device Discovery
 
-Device Discovery could be started through the Liota package of 'dev_disc.py' under the folder of packages/dev_disc/, which will initialize a Device Discovery Thread. If you want it ran automatically when you start package manager, you can put dev_disc/dev_disc and its sha1 checksum inside packages_auto.txt.
+Device Discovery could be started through the Liota package of `dev_disc.py` under the folder of packages/dev_disc/, which will initialize a Device Discovery Thread. If you want it ran automatically when you start package manager, you can put dev_disc/dev_disc and its sha1 checksum inside packages_auto.txt.
 To be reminded, to let discovered devices registered to user specified DCCs, at least one DCC package should be loaded.
 
 In details, after installation with (sudo python setup.py install or pip install liota), you can do the following:
-# Configuration A (under /etc/liota/conf, inside liota.conf, default/example settings are available)
+
+### Configuration A
+(under /etc/liota/conf, inside liota.conf, default/example settings are available)
+```sh
 [IOTCC_PATH]
 
-dev_file_path = /etc/liota/conf/devs   # the folder where store discovered device information files
+# the folder where store discovered device information files
+dev_file_path = /etc/liota/conf/devs
 
-entity_file_path = /etc/liota/conf/entity # the folder where store discovered device information internally
+# the folder where store discovered device information internally
+entity_file_path = /etc/liota/conf/entity
 
 [DISC_CFG]
 
-disc_cmd_msg_pipe = /etc/liota/packages/dev_disc/disc_cmd_messenger.fifo # the named pipe path for discovery CmdMessengerThread
+# the named pipe path for discovery CmdMessengerThread
+disc_cmd_msg_pipe = /etc/liota/packages/dev_disc/disc_cmd_messenger.fifo
 
-[DEVICE_TYPE_TO_UNIQUEKEY_MAPPING] # device discovery can only process device types which are listed here, among its attributes,
+[DEVICE_TYPE_TO_UNIQUEKEY_MAPPING]
 
-Press64 = serial		# Unique attribute's key should be specified, e.g., serial or SN
+# device discovery can only process device types which are listed here, among its attributes
+Press64 = serial
 
+# Unique attribute's key should be specified, e.g., serial or SN
 LM35 = SN
 
-Apple56 = SN
+Device56 = SN
 
-Banana23 = serial
+Device23 = serial
 
-[DEVICE_TYPE_TO_DCC_MAPPING]  # for each device type, list each DCC's package name where discovered devices would like to be registered to
+[DEVICE_TYPE_TO_DCC_MAPPING]
 
-LM35 = graphite, iotcc_mqtt, iotcc		# DCC's package might be more than one, since may use different DCCComms, e.g., iotcc_mqtt and iotcc
+# for each device type, list each DCC's package name where discovered devices would like to be registered to
+# DCC's package might be more than one, since may use different DCCComms, e.g., iotcc_mqtt and iotcc
+LM35 = graphite, iotcc_mqtt, iotcc
 
-Press64 = iotcc_mqtt, iotcc		# DCC could be ANY one that liota supports
+# DCC could be ANY one that liota supports
+Press64 = iotcc_mqtt, iotcc
 
-Apple56 = iotcc_mqtt 	# If a DCC's package is not loaded, no registration will be carried out, while other tasks keep on going
+# If a DCC's package is not loaded, no registration will be carried out, while other tasks keep on going
+Device56 = iotcc_mqtt
 
-Banana23 = iotcc	# Later user could create Liota Package for discovered devices to start collecting metrics
+# Later user could create Liota Package for discovered devices to start collecting metrics
+Device23 = iotcc
 
 [DEVSIM_CFG]
 
-devsim_cmd_msg_pipe = /etc/liota/packages/dev_disc/devsim_cmd_messenger.fifo # named pipe for Device Simulator CmdMessengerThread
+# named pipe for Device Simulator CmdMessengerThread
+devsim_cmd_msg_pipe = /etc/liota/packages/dev_disc/devsim_cmd_messenger.fifo
 
-[DISC_ENDPOINT_LIST]		# Endpoing list where you want discovery listens on and simulator send messages to
+[DISC_ENDPOINT_LIST]
 
-							# if no item in this list, Device Discovery will not be started
+# Endpoing list where you want discovery listens on and simulator send messages to
+# if no item in this list, Device Discovery will not be started
 
-disc_msg_pipe = /etc/liota/packages/dev_disc/discovery_messenger.fifo	# currently, support these 4 types (currently,
+# currently, support these 4 types (currently,coap and socket are not allowed for security consideration).
+disc_msg_pipe = /etc/liota/packages/dev_disc/discovery_messenger.fifo
 
-socket = 127.0.0.1:5000						# coap and socket are not allowed for security consideration).
+socket = 127.0.0.1:5000
+# Mqtt broker should be started first before publish/subscribe
+# reference: https://mosquitto.org/download/
+mqtt = 127.0.0.1:1882:device_discovery
 
-mqtt = 127.0.0.1:1882:device_discovery		# Mqtt broker should be started first before publish/subscribe
+coap = 127.0.0.1:5683
 
-coap = 127.0.0.1:5683					# reference: https://mosquitto.org/download/
+# Mqtt with TLS authentication need more settings
 
-[DISC_MQTT_CFG]							# Mqtt with TLS authentication need more settings
+[DISC_MQTT_CFG]
+
+# default setting does not need certificate, but basic authentication
 enable_authentication = True
-broker_username = User_Name						# *default setting does not need certificate, but basic authentication
+broker_username = User_Name
 
-broker_password = Password						# should be used for security, please change settings
+# should be used for security, please change settings
+broker_password = Password
 
 broker_root_ca_cert = None
 
@@ -105,14 +127,17 @@ retry = 5
 keep_alive = 60
 
 ConnectDisconnectTimeout = 10
-* When MQTT broker also sits on the edge system, MQTT subscriber can listen on 127.0.0.1/localhost with a unique port (rather than well-known 1883) and use basic authentication
+```
+
+When MQTT broker also sits on the edge system, MQTT subscriber can listen on 127.0.0.1/localhost with a unique port (rather than well-known 1883) and use basic authentication
 to guarantee secured communication with MQTT broker. It's MQTT broker and MQTT publisher's responsibility to guarantee MQTT broker and external world communicate securely.
 
-# Configuration B (under /etc/liota/packages, inside sampleProf.conf)
+### Configuration B
+(under /etc/liota/packages, inside sampleProf.conf)
 
 Since when device is discovered, it will be registered to DCC based on your [DEVICE_TYPE_TO_DCC_MAPPING] in liota.conf,
 it will use DCC credentials. Therefore, please guarantee IOTCC or Graphite section in sampleProf.conf are configured well.
-
+```sh
 #### [IOTCC] ####
 WebSocketUrl = "xxx"
 
@@ -124,25 +149,30 @@ IotCCPassword = "xxx"
 GraphiteIP = "92.246.246.188"
 
 GraphitePort = 2003
+```
 
 To be reminded, if DCC Liota package is not loaded, i.e., no corresponding DCC instance, although discovery thread can still listens on end points, device registration will not be carried out.
 
-# Start Device Discovery Liota Package (dev_disc.py under /etc/liota/packages/)
+# Start Device Discovery Liota Package
+(dev_disc.py under /etc/liota/packages/)
 
-a). when keep dev_disc inside packages_auto.txt:
+a. When keep dev_disc inside packages_auto.txt:
 
-	sudo python liotad.py (add & is optional)
+```sh
+sudo python liotad.py (add & is optional)
+```
 
-b). when dev_disc is not inside packages_auto.txt:
+b. When dev_disc is not inside packages_auto.txt:
 
-	start package manager with cmd line in 1., then load device discovery package by
+Start package manager with cmd line in 1, then load device discovery package by
 
-	sudo ./liotapkg.sh load dev_disc/dev_disc sha1_checksum
-
+```sh
+sudo ./liotapkg.sh load dev_disc/dev_disc sha1_checksum
+```
 (can check logs through "tail -f /var/log/liota/liota.log")
 
-# Verify Device Discovery is started
-messages should be printed out to stdout, e.g.,
+### Verify Device Discovery is started
+Messages should be printed out to stdout, e.g.,
 
 	MqttListener is initialized   # when you have Mqtt inside End Point list
 
@@ -198,7 +228,7 @@ You can also use CmdMessage to check certain information (under /etc/liota/packa
 
 	sudo ./liota_devsim_pipe.sh list th
 
-# In addition, currently the messages sent from device simulators are hard coded (under source code
+In addition, currently the messages sent from device simulators are hard coded (under source code
 liota/dev_sims/coap.py (or mqtt.py, named_pipe.py, socket_clnt.py), and inside run()), like
 
         msg = {
@@ -229,13 +259,13 @@ Please modify them corresponding to your settings in liota.conf!!!
 
 Currently, supported commands include action commands and statistical commands.
 
-### action commands
+### Action commands
 
 * **terminate**
 
 Stop DiscoveryThread or SimulatorThread, and terminate and cleanup spawned out threads from them.
 
-###Statistical commands
+### Statistical commands
 
 * **stat** th
 
