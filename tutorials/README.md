@@ -8,7 +8,7 @@ Hardware Required:
 4. RaspberryPi
 5. AM2302/DHT22/DHT11 sensor
 
-Wire the RaspberryPi and sensor as shown in the picture below, if the external devices are disconnected, or high-impedance gets introduced the pull-up resistor attached will ensure that the signal will be a valid logic level.
+Wire the Sensor to RPi pin no.4 as shown in the picture below, if the external devices are disconnected, or high-impedance gets introduced the pull-up resistor attached will ensure that the signal will be a valid logic level.
 
 ![RPi](../images/rpi_circuit_diagram.png)
 
@@ -41,7 +41,7 @@ $ cd Adafruit_Python_DHT
 $ sudo python setup.py install
 ```
 
-You can test if the library is properly installed by running the below command, you'll be getting the temperature and the humidity as the output at the current point of time:
+You can test if the library is properly installed and the device is correctly attached to RPi Pin no.4 by running the below command, you'll be getting the temperature and the humidity as the output at the current point of time:
 ```sh
 $ sudo /home/pi/sources/Adafruit_Python_DHT/examples/AdafruitDHT.py 2302 4
 ```
