@@ -162,6 +162,12 @@ class IotControlCenter(DataCenterComponent):
                 log.debug("Processed msg: {0}".format(json_msg["type"]))
                 if json_msg["type"] == "remove_resource_response" and json_msg["body"]["result"] == "succeeded":
                     log.info("Unregistration of resource {0} with IoTCC succeeded".format(entity_obj.ref_entity.name))
+                    if entity_obj.ref_entity.entity_type != "HelixGateway":
+                        self.store_device_info(entity_obj.reg_entity_id, entity_obj.ref_entity.name,
+                                               entity_obj.ref_entity.entity_type, None, True)
+                    else:
+                        self.remove_reg_entity_details(entity_obj.ref_entity.name, entity_obj.reg_entity_id)
+                        self.store_device_info(entity_obj.reg_entity_id, entity_obj.ref_entity.name, None, None, True)
                 else:
                     log.info("Unregistration of resource {0} with IoTCC failed".format(entity_obj.ref_entity.name))
             except:
@@ -169,14 +175,6 @@ class IotControlCenter(DataCenterComponent):
 
         self.comms.send(json.dumps(self._unregistration(self.next_id(), entity_obj.ref_entity)))
         on_response(self.recv_msg_queue.get(True, 20))
-        if entity_obj.ref_entity.entity_type != "HelixGateway":
-            self.store_device_info(entity_obj.reg_entity_id, entity_obj.ref_entity.name,
-                                   entity_obj.ref_entity.entity_type, None, True)
-        else:
-            self.remove_reg_entity_details(entity_obj.ref_entity.name, entity_obj.reg_entity_id)
-            self.store_device_info(entity_obj.reg_entity_id, entity_obj.ref_entity.name, None, None, True)
-
-        log.info("Unregistration of resource {0} with IoTCC complete".format(entity_obj.ref_entity.name))
 
     def create_relationship(self, reg_entity_parent, reg_entity_child):
         """ This function initializes all relations between Registered Entities.
@@ -196,7 +194,9 @@ class IotControlCenter(DataCenterComponent):
             # should save parent's reg_entity_id
             reg_entity_child.reg_entity_id = reg_entity_parent.reg_entity_id
             entity_obj = reg_entity_child.ref_entity
-            self.publish_unit(reg_entity_child, entity_obj.name, entity_obj.unit)
+            # If the units are passed from user code they`ll be set as unit properties
+            if entity_obj.unit is not None:
+                self.publish_unit(reg_entity_child, entity_obj.name, entity_obj.unit)
         else:
             self.comms.send(json.dumps(self._relationship(self.next_id(),
                                                           reg_entity_parent.reg_entity_id,

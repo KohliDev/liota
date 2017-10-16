@@ -35,6 +35,7 @@ import os
 import ssl
 import sys
 import time
+import random
 
 import paho.mqtt.client as paho
 
@@ -274,6 +275,7 @@ class Mqtt():
         self._paho_client.connect(host=self.url, port=self.port, keepalive=self.keep_alive)
 
         # Start network loop to handle auto-reconnect
+        self._paho_client.reconnect_delay_set(random.randint(1,15), random.randint(150,250))
         self._paho_client.loop_start()
         ten_ms_count = 0
         while (ten_ms_count != self._conn_disconn_timeout * 100) and (self._connect_result_code == sys.maxsize):
@@ -311,7 +313,8 @@ class Mqtt():
             log.debug("Publishing Message ID : {0} with result code : {1} ".format(mess_info.mid, mess_info.rc))
             log.debug("Published Topic:{0}, Payload:{1}, QoS:{2}".format(topic, message, qos))
         except Exception:
-            log.exception("MQTT Publish exception traceback..")
+            log.exception("MQTT Publish exception")
+            raise Exception("MQTT Publish exception")
 
     def subscribe(self, topic, qos, callback):
         """
