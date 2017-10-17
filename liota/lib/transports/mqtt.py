@@ -65,6 +65,12 @@ class Mqtt():
         self._connect_result_code = sys.maxsize
         self._disconnect_result_code = rc
         log.info("Disconnected with result code : {0} : {1} ".format(str(rc), paho.connack_string(rc)))
+        if self._disconnect_result_code == 0:
+            log.info("Clean disconnection")
+        else:
+            wait_time=round(random.uniform(1.0,10.0),1)
+            log.info("Unexpected disconnection! Reconnecting in {0} seconds".format(str(wait_time)))
+            time.sleep(wait_time)
 
     def on_message(self, client, userdata, msg):
         """
@@ -311,7 +317,11 @@ class Mqtt():
         try:
             mess_info = self._paho_client.publish(topic, message, qos, retain)
             log.debug("Publishing Message ID : {0} with result code : {1} ".format(mess_info.mid, mess_info.rc))
-            log.debug("Published Topic:{0}, Payload:{1}, QoS:{2}".format(topic, message, qos))
+            if mess_info.rc == 0:
+                log.debug("Published Topic:{0}, Payload:{1}, QoS:{2}".format(topic, message, qos))
+            else:
+                log.exception("MQTT Publish exception:{0} result code".format(mess_info.rc))
+                raise Exception("MQTT Publish exception:{0} result code".format(mess_info.rc))
         except Exception:
             log.exception("MQTT Publish exception")
             raise Exception("MQTT Publish exception")
