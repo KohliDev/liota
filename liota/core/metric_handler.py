@@ -207,8 +207,7 @@ class CollectionThread(Thread):
                     send_queue.put(metric)
                     metric.reset_aggregation_size()
             except Exception as e:
-                log.error("Error collecting data for metric" + str(metric))
-                raise e
+                log.exception("Error collecting data for metric" + str(metric))
 
 
 class CollectionThreadPool:
